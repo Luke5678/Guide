@@ -1,0 +1,12 @@
+﻿services:
+  guide.client:
+    image: guide.client
+    build:
+      context: .
+      dockerfile: Guide/Guide.Client/Dockerfile
+
+  guide:
+    image: guide
+    build:
+      context: .
+      dockerfile: Guide/Guide/Dockerfile
