@@ -1,12 +1,8 @@
 ﻿services:
-  guide.client:
-    image: guide.client
-    build:
-      context: .
-      dockerfile: Guide/Guide.Client/Dockerfile
-
-  guide:
+  app:
     image: guide
+    ports:
+      - "80:8080"
     build:
       context: .
-      dockerfile: Guide/Guide/Dockerfile
+      dockerfile: src/Guide/Dockerfile

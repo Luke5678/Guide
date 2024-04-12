@@ -6,12 +6,13 @@ EXPOSE 8081
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
+
 WORKDIR /src
-COPY ["Guide/Guide/Guide.csproj", "Guide/Guide/"]
-COPY ["Guide/Guide.Client/Guide.Client.csproj", "Guide/Guide.Client/"]
-RUN dotnet restore "Guide/Guide/Guide.csproj"
-COPY . .
-WORKDIR "/src/Guide/Guide"
+COPY ["src/Guide/", "Guide/"]
+COPY ["src/Guide.Client/", "Guide.Client/"]
+
+WORKDIR "/src/Guide"
+RUN dotnet restore "Guide.csproj"
 RUN dotnet build "Guide.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish

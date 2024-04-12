@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Guide", "Guide\Guide\Guide.csproj", "{D47A1771-FC72-47A4-836E-74DBD633D36A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Guide", "src\Guide\Guide.csproj", "{D47A1771-FC72-47A4-836E-74DBD633D36A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Guide.Client", "Guide\Guide.Client\Guide.Client.csproj", "{F4CC7098-F9B2-4D29-A307-C6B73A144C53}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Guide.Client", "src\Guide.Client\Guide.Client.csproj", "{F4CC7098-F9B2-4D29-A307-C6B73A144C53}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6D4EAD73-2E5E-44D3-A37E-425E41CDF3DB}"
 	ProjectSection(SolutionItems) = preProject
