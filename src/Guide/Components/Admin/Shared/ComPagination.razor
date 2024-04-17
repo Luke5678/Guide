@@ -1,0 +1,80 @@
+﻿@if (PageCount > 0 && CurrentPage > 0)
+{
+    <div class="flex items-center justify-between mt-6">
+        <button @onclick="Previous"
+                class="flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100">
+            <img src="arrow-left.svg" alt="Previous" class="w-5 h-5">
+            <span>
+                Wstecz
+            </span>
+        </button>
+
+        <div class="items-center hidden md:flex gap-x-3">
+            @foreach (var num in GetPageNumbers())
+            {
+                if (num == CurrentPage)
+                {
+                    <a href="#" class="px-2 py-1 text-sm text-blue-500 rounded-md bg-blue-100/60">
+                        @num
+                    </a>
+                }
+                else if (num == -1)
+                {
+                    <a href="#" class="px-2 py-1 text-sm rounded-md hover:bg-gray-100">
+                        ...
+                    </a>
+                }
+                else
+                {
+                    <a href="#" class="px-2 py-1 text-sm rounded-md hover:bg-gray-100">
+                        @num
+                    </a>
+                }
+            }
+        </div>
+
+        <button @onclick="Next"
+                class="flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100">
+            <span>
+                Dalej
+            </span>
+            <img src="arrow-left.svg" alt="Next" class="w-5 h-5 rotate-180">
+        </button>
+    </div>
+}
+
+@code {
+    [Parameter] public int PageCount { get; set; }
+
+    [Parameter] public int CurrentPage { get; set; }
+
+    private void Previous()
+    {
+        CurrentPage = CurrentPage == 1 ? PageCount : CurrentPage - 1;
+    }
+
+    private void Next()
+    {
+        CurrentPage = CurrentPage == PageCount ? 1 : CurrentPage + 1;
+    }
+
+    private int[] GetPageNumbers()
+    {
+        if (PageCount < 7)
+        {
+            return Enumerable.Range(1, PageCount).ToArray();
+        }
+
+        var middle = CurrentPage > 2 ? CurrentPage : 3;
+
+        if (middle >= PageCount - 3)
+        {
+            middle = PageCount - 3;
+        }
+
+        Console.WriteLine($"middle: {middle}");
+
+        return Enumerable.Range(middle - 2, 5).Concat([-1, PageCount]).ToArray();
+    }
+
+}

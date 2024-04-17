@@ -1,0 +1,26 @@
+﻿@namespace Guide.Components.Admin.Shared
+
+<div class="overflow-x-auto">
+    <div class="inline-block min-w-full py-2 align-middle">
+        <div class="overflow-hidden border border-gray-200 md:rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        @HeadContent
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @BodyContent
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public RenderFragment? HeadContent { get; set; }
+
+    [Parameter] public RenderFragment? BodyContent { get; set; }
+
+    private readonly string[] _columns = ["Id", "Kategoria", "Nazwa"];
+}

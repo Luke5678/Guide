@@ -1,0 +1,21 @@
+﻿@namespace Guide.Components.Admin.Shared
+
+<th scope="col" class="px-4 py-3.5 text-sm font-normal text-left cursor-pointer">
+    @if (Sortable)
+    {
+        <div class="flex items-center justify-between">
+            <span>@ChildContent</span>
+            <img src="sort.svg" alt="Sort" class="h-4 w-4">
+        </div>
+    }
+    else
+    {
+        <span>@ChildContent</span>
+    }
+</th>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    [Parameter] public bool Sortable { get; set; } = false;
+}
