@@ -1,0 +1,27 @@
+﻿@inherits LayoutComponentBase
+
+<div class="flex flex-col min-h-dvh">
+    <header class="border-b py-4 shadow-md mb-8">
+        <div class="container flex items-center justify-between mx-auto px-4 sm:px-6 md:px-8">
+            <img src="logo.svg" alt="Logo" class="max-h-[50px]">
+            <nav class="hidden md:flex gap-4">
+                <a href="#">Miejsca</a>
+                <a href="#">Kategorie</a>
+                <a href="#">Komentarze</a>
+                <a href="#">Konfiguracja</a>
+            </nav>
+            <div>
+                Wyloguj
+            </div>
+        </div>
+    </header>
+    <main class="grow container mx-auto px-4 sm:px-6 md:px-8">
+        @Body
+    </main>
+    <footer class="mt-8">
+        <div class="container mx-auto px-4 sm:px-6 md:px-8">
+            <hr>
+            <div class="text-center my-8">Copyright &copy; 2024</div>
+        </div>
+    </footer>
+</div>
