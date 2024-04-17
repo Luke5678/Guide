@@ -1,0 +1,53 @@
+﻿@using Guide.Components.Admin.Shared
+
+@page "/admin"
+@page "/admin/places"
+
+@rendermode InteractiveServer
+
+<PageTitle>Miejsca - Panel Administratora</PageTitle>
+
+<ComTable>
+    <HeadContent>
+        @foreach (var column in _columns)
+        {
+            <ComTh sortable>@column</ComTh>
+        }
+        <ComTh/>
+    </HeadContent>
+    <BodyContent>
+        @for (var i = 0; i < 10; i++)
+        {
+            <tr>
+                <ComTd>#2137</ComTd>
+                <ComTd>Zabytki</ComTd>
+                <ComTd>
+                    Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum
+                    Lorem ipsum
+                </ComTd>
+                <ComTd>
+                    <div class="flex items-center gap-x-4">
+                        <button type="button"
+                                class="text-sm bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded focus:outline-none focus:shadow-outline">
+                            Edytuj
+                        </button>
+                        <button type="button"
+                                class="text-sm bg-red-500 hover:bg-red-700 text-white py-1 px-2 rounded focus:outline-none focus:shadow-outline">
+                            Usuń
+                        </button>
+                    </div>
+                </ComTd>
+            </tr>
+            {
+                i++;
+            }
+        }
+    </BodyContent>
+</ComTable>
+
+<Guide.Components.Admin.Pages.ComPagination PageCount="20" CurrentPage="5"/>
+
+@code {
+    private readonly string[] _columns = ["Id", "Kategoria", "Nazwa"];
+
+}
