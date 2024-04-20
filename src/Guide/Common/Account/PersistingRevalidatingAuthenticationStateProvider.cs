@@ -1,15 +1,15 @@
 using System.Diagnostics;
 using System.Security.Claims;
+using Guide.Client;
+using Guide.Domain.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using Guide.Client;
-using Guide.Data;
 
-namespace Guide.Components.Account;
+namespace Guide.Common.Account;
 
 // This is a server-side AuthenticationStateProvider that revalidates the security stamp for the connected user
 // every 30 minutes an interactive circuit is connected. It also uses PersistentComponentState to flow the
@@ -46,11 +46,11 @@ internal sealed class PersistingRevalidatingAuthenticationStateProvider : Revali
     {
         // Get the user manager from a new scope to ensure it fetches fresh data
         await using var scope = scopeFactory.CreateAsyncScope();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
         return await ValidateSecurityStampAsync(userManager, authenticationState.User);
     }
 
-    private async Task<bool> ValidateSecurityStampAsync(UserManager<ApplicationUser> userManager,
+    private async Task<bool> ValidateSecurityStampAsync(UserManager<User> userManager,
         ClaimsPrincipal principal)
     {
         var user = await userManager.GetUserAsync(principal);
