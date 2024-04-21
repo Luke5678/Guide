@@ -13,25 +13,27 @@ public static class DependencyInjection
         services
             .AddDbContext<GuideDbContext>(options =>
             {
-                var connectionString = configuration.GetConnectionString("MySqlConnection");
-                var useMySql = options.UseMySql(
-                    connectionString,
-                    ServerVersion.AutoDetect(connectionString),
-                    options => options.UseMicrosoftJson());
+                // var connectionString = configuration.GetConnectionString("MySqlConnection");
+                // var db = options.UseMySql(
+                //     connectionString,
+                //     ServerVersion.AutoDetect(connectionString),
+                //     options => options.UseMicrosoftJson());
+
+                var connectionString = configuration.GetConnectionString("DefaultConnection") ??
+                                       throw new InvalidOperationException(
+                                           "Connection string 'DefaultConnection' not found.");
+                var db = options.UseSqlite(connectionString);
 
                 var isDev = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
-
                 if (isDev)
                 {
-                    useMySql
-                        .EnableSensitiveDataLogging()
+                    db.EnableSensitiveDataLogging()
                         .EnableDetailedErrors()
                         .LogTo(Log.Logger.Information, LogLevel.Information);
                 }
                 else
                 {
-                    useMySql
-                        .EnableSensitiveDataLogging(false)
+                    db.EnableSensitiveDataLogging(false)
                         .EnableDetailedErrors(false)
                         .LogTo(Log.Logger.Warning, LogLevel.Warning);
                 }

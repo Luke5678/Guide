@@ -1,0 +1,55 @@
+﻿@using Guide.Domain.Entities
+
+@page "/admin/attractions/update/{id:int}"
+@rendermode InteractiveServer
+
+@inject IAttractionService AttractionService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Miejsca - Panel Administratora</PageTitle>
+
+<EditForm Model="_attraction" OnValidSubmit="HandleSubmit">
+    <FluentValidationValidator/>
+    <div class="flex flex-col gap-4 mb-4">
+        <div>
+            <label>Nazwa</label>
+            <InputText @bind-Value="_attraction.Name">@_attraction.Name</InputText>
+            <ValidationMessage For="() => _attraction.Name"/>
+        </div>
+        <div>
+            <label>Kategoria</label>
+            <InputText @bind-Value="_attraction.Category">@_attraction.Category</InputText>
+            <ValidationMessage For="() => _attraction.Category"/>
+        </div>
+        <div>
+            <label>Opis</label>
+            <InputTextArea @bind-Value="_attraction.Description" rows="4">@_attraction.Description</InputTextArea>
+            <ValidationMessage For="() => _attraction.Description"/>
+        </div>
+    </div>
+    <button type="submit" class="btn bg-blue-700 hover:bg-blue-90">Zapisz</button>
+</EditForm>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+
+    Attraction? _attraction;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id.HasValue)
+        {
+            _attraction = await AttractionService.Get(Id.Value);
+            if (_attraction != null) return;
+        }
+
+        NavigationManager.NavigateTo("/admin/attractions");
+    }
+
+    async Task HandleSubmit()
+    {
+        await AttractionService.Update(_attraction!);
+        NavigationManager.NavigateTo("/admin/attractions");
+    }
+
+}

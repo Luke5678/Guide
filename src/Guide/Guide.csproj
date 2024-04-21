@@ -9,12 +9,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Guide.Client\Guide.Client.csproj" />
+        <PackageReference Include="Blazored.FluentValidation" Version="2.1.0" />
+        <PackageReference Include="Bogus" Version="35.5.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.3" />
         <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.3" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.3" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.3" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Guide.Client\Guide.Client.csproj" />
         <ProjectReference Include="..\Guide.Domain\Guide.Domain.csproj" />
         <ProjectReference Include="..\Guide.Infrastructure\Guide.Infrastructure.csproj" />
     </ItemGroup>

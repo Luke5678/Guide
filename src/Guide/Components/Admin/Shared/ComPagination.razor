@@ -1,4 +1,4 @@
-﻿@if (PageCount > 1 && CurrentPage > 0)
+﻿@if (PagesAmount > 1 && CurrentPage > 0)
 {
     <div class="flex items-center justify-between mt-6">
         <button @onclick="Previous"
@@ -63,31 +63,33 @@
 }
 
 @code {
-    [Parameter] public int PageCount { get; set; }
-
     [Parameter] public int CurrentPage { get; set; }
+    [Parameter] public int PagesAmount { get; set; }
+
+    [Parameter] public EventCallback<int> OnPageChanged { get; set; }
 
     private ComModal? _modal;
     private int _pageNumberInput;
 
-    private void Previous()
+    async Task Previous()
     {
-        CurrentPage = CurrentPage == 1 ? PageCount : CurrentPage - 1;
+        await OnPageChanged.InvokeAsync(CurrentPage == 1 ? PagesAmount : CurrentPage - 1);
     }
 
-    private void Next()
+    async Task Next()
     {
-        CurrentPage = CurrentPage == PageCount ? 1 : CurrentPage + 1;
+        await OnPageChanged.InvokeAsync(CurrentPage == PagesAmount ? 1 : CurrentPage + 1);
     }
 
-    private void SetPage()
+    async Task SetPage()
     {
-        CurrentPage = _pageNumberInput > 0 && _pageNumberInput <= PageCount
+        var newPage = _pageNumberInput > 0 && _pageNumberInput <= PagesAmount
             ? _pageNumberInput
-            : _pageNumberInput > PageCount
-                ? PageCount
+            : _pageNumberInput > PagesAmount
+                ? PagesAmount
                 : 1;
         _modal?.Hide();
+        await OnPageChanged.InvokeAsync(newPage);
     }
 
     void ShowModal()
@@ -98,27 +100,27 @@
 
     private int[] GetPageNumbers()
     {
-        if (PageCount < 7)
+        if (PagesAmount < 7)
         {
-            return Enumerable.Range(1, PageCount).ToArray();
+            return Enumerable.Range(1, PagesAmount).ToArray();
         }
 
         var numbers = new List<int> { 1 };
 
         if (CurrentPage < 4)
         {
-            numbers.AddRange([2, 3, 4, 5, -1, PageCount]);
+            numbers.AddRange([2, 3, 4, 5, -1, PagesAmount]);
         }
-        else if (CurrentPage > PageCount - 4)
+        else if (CurrentPage > PagesAmount - 4)
         {
             numbers.Add(-1);
-            numbers.AddRange(Enumerable.Range(PageCount - 4, 5));
+            numbers.AddRange(Enumerable.Range(PagesAmount - 4, 5));
         }
         else
         {
             numbers.Add(-1);
             numbers.AddRange(Enumerable.Range(CurrentPage - 1, 3));
-            numbers.AddRange([-1, PageCount]);
+            numbers.AddRange([-1, PagesAmount]);
         }
 
         return numbers.ToArray();

@@ -1,0 +1,90 @@
+﻿@using Guide.Components.Admin.Shared
+@using Guide.Domain.Entities
+
+@page "/admin"
+@page "/admin/attractions"
+@rendermode InteractiveServer
+
+@inject IAttractionService AttractionService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Atrakcje - Panel Administratora</PageTitle>
+
+<div class="flex mb-8">
+    <a class="btn bg-blue-700 hover:bg-blue-900" href="admin/attractions/create">
+        Nowa atrakcja
+    </a>
+</div>
+
+@if (Attractions == null)
+{
+    <div>...</div>
+}
+else
+{
+    <ComTable>
+        <HeadContent>
+            <ComTh sortable>Id</ComTh>
+            <ComTh sortable>Kategoria</ComTh>
+            <ComTh sortable>Nazwa</ComTh>
+            <ComTh/>
+        </HeadContent>
+        <BodyContent>
+            @foreach (var attraction in Attractions)
+            {
+                <tr>
+                    <ComTd>@attraction.Id</ComTd>
+                    <ComTd>@attraction.Category</ComTd>
+                    <ComTd>@attraction.Name</ComTd>
+                    <ComTd>
+                        <div class="flex items-center gap-x-4">
+                            <button class="btn bg-blue-700 hover:bg-blue-900" @onclick="() => Edit(attraction)">
+                                Edytuj
+                            </button>
+                            <button class="btn bg-red-500 hover:bg-red-700" @onclick="() => Delete(attraction)">
+                                Usuń
+                            </button>
+                        </div>
+                    </ComTd>
+                </tr>
+            }
+        </BodyContent>
+    </ComTable>
+
+    <ComPagination CurrentPage="CurrentPage" PagesAmount="PagesAmount" OnPageChanged="page => ChangePage(page)"/>
+}
+
+@code {
+    List<Attraction>? Attractions { get; set; }
+    int CurrentPage { get; set; } = 1;
+    int PageSize { get; set; } = 10;
+    int PagesAmount { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ChangePage(CurrentPage, true);
+        Console.WriteLine(PagesAmount);
+    }
+
+    void Edit(Attraction attraction)
+    {
+        NavigationManager.NavigateTo($"/admin/attractions/update/{attraction.Id}");
+    }
+
+    async Task Delete(Attraction attraction)
+    {
+        await AttractionService.Delete(attraction.Id);
+        await ChangePage(CurrentPage, true);
+        StateHasChanged();
+    }
+
+    async Task ChangePage(int newPage, bool updatePagesAmount = false)
+    {
+        if (updatePagesAmount)
+            PagesAmount = (int)Math.Ceiling(await AttractionService.GetCount() / (double)PageSize);
+        Attractions = await AttractionService.GetPage(newPage, PageSize);
+        CurrentPage = newPage;
+        StateHasChanged();
+    }
+
+}

@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-input {
+input, textarea {
     display: block;
     color: #111827;
     background: #F9FAFBFF;
@@ -21,4 +21,23 @@ label {
     font-weight: 500;
     line-height: 1.25rem;
     margin-bottom: 8px;
+}
+
+.btn {
+    display: block;
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.25rem;
+    text-align: center;
+    border-radius: 0.5rem;
+    padding: 10px 20px;
+}
+
+.btn:hover {
+    background-color: #1e40af;
+}
+
+.validation-message {
+    color: red;
 }

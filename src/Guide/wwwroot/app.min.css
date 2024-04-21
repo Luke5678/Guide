@@ -618,6 +618,10 @@ video {
   margin-bottom: 0.75rem;
 }
 
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
 .mb-8 {
   margin-bottom: 2rem;
 }
@@ -801,10 +805,6 @@ video {
 
 .whitespace-nowrap {
   white-space: nowrap;
-}
-
-.rounded {
-  border-radius: 0.25rem;
 }
 
 .rounded-lg {
@@ -22887,6 +22887,10 @@ video {
   background-origin: content-box;
 }
 
+.p-0 {
+  padding: 0px;
+}
+
 .p-4 {
   padding: 1rem;
 }
@@ -22939,6 +22943,10 @@ video {
 .py-4 {
   padding-top: 1rem;
   padding-bottom: 1rem;
+}
+
+.pl-8 {
+  padding-left: 2rem;
 }
 
 .ps-3 {
@@ -23102,7 +23110,7 @@ video {
   transition-duration: 200ms;
 }
 
-input {
+input, textarea {
   display: block;
   color: #111827;
   background: #F9FAFBFF;
@@ -23121,6 +23129,25 @@ label {
   font-weight: 500;
   line-height: 1.25rem;
   margin-bottom: 8px;
+}
+
+.btn {
+  display: block;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  text-align: center;
+  border-radius: 0.5rem;
+  padding: 10px 20px;
+}
+
+.btn:hover {
+  background-color: #1e40af;
+}
+
+.validation-message {
+  color: red;
 }
 
 .hover\:bg-amber-100:hover {

@@ -1,8 +1,9 @@
 using Guide.Common.Account;
+using Guide.Common.Interfaces;
+using Guide.Common.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Guide.Components;
-using Guide.Components.Account;
 using Guide.Domain.Entities;
 using Guide.Infrastructure;
 using Serilog;
@@ -42,12 +43,7 @@ try
         .AddIdentityCookies();
 
     builder.Services.AddInfrastructure(builder.Configuration);
-
-    // var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
-    //                        throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-    // builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    //     options.UseSqlite(connectionString));
-    // builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+    builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
     builder.Services.AddIdentityCore<User>(options => options.SignIn.RequireConfirmedAccount = true)
         .AddEntityFrameworkStores<GuideDbContext>()
@@ -55,6 +51,8 @@ try
         .AddDefaultTokenProviders();
 
     builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
+
+    builder.Services.AddScoped<IAttractionService, AttractionService>();
 
     var app = builder.Build();
 
