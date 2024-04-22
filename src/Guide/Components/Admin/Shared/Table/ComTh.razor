@@ -1,6 +1,7 @@
 ﻿@namespace Guide.Components.Admin.Shared
 
-<th scope="col" class="px-4 py-3.5 text-sm font-normal text-left cursor-pointer">
+<th scope="col" class="px-4 py-3.5 text-sm font-normal text-left cursor-pointer"
+    @onclick="OnClickCallback">
     @if (Sortable)
     {
         <div class="flex items-center justify-between">
@@ -16,6 +17,7 @@
 
 @code {
     [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public EventCallback OnClickCallback { get; set; }
 
-    [Parameter] public bool Sortable { get; set; } = false;
+    [Parameter] public bool Sortable { get; set; }
 }

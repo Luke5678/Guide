@@ -1,4 +1,5 @@
-﻿using Bogus;
+﻿using System.Text.RegularExpressions;
+using Bogus;
 using Guide.Common.Interfaces;
 using Guide.Domain.Entities;
 using Guide.Infrastructure;
@@ -13,9 +14,35 @@ public class AttractionService(GuideDbContext dbContext) : IAttractionService
         return await dbContext.Attractions.FindAsync(id);
     }
 
-    public async Task<List<Attraction>> GetAll()
+    public async Task<List<Attraction>> GetAll(int page = 0, int limit = 0, string? orderBy = null)
     {
-        return await dbContext.Attractions.ToListAsync();
+        var query = dbContext.Attractions.AsNoTracking();
+        var rg = new Regex(@"^\w+ (asc|desc)$", RegexOptions.IgnoreCase);
+
+        if (string.IsNullOrEmpty(orderBy) || !rg.IsMatch(orderBy))
+        {
+            query = query.OrderBy(x => x.Id);
+        }
+        else
+        {
+            query = orderBy.ToLower() switch
+            {
+                "id asc" => query.OrderBy(x => x.Id),
+                "id desc" => query.OrderByDescending(x => x.Id),
+                "name asc" => query.OrderBy(x => x.Name),
+                "name desc" => query.OrderByDescending(x => x.Name),
+                "category asc" => query.OrderBy(x => x.Category),
+                "category desc" => query.OrderByDescending(x => x.Category),
+                _ => query
+            };
+        }
+
+        if (page > 0 && limit > 0)
+        {
+            query = query.Skip((page - 1) * limit).Take(limit);
+        }
+
+        return await query.ToListAsync();
     }
 
     public async Task Create(Attraction attraction)

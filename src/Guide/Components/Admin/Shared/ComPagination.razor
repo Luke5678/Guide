@@ -14,21 +14,21 @@
             {
                 if (num == CurrentPage)
                 {
-                    <a href="#" class="px-2 py-1 text-sm text-blue-500 rounded-md bg-blue-100/60">
+                    <button @onclick="() => SetPage(num)" class="px-2 py-1 text-sm text-blue-500 rounded-md bg-blue-100/60">
                         @num
-                    </a>
+                    </button>
                 }
                 else if (num == -1)
                 {
-                    <div @onclick="ShowModal" class="px-2 py-1 text-sm rounded-md hover:bg-gray-100 cursor-pointer">
+                    <button @onclick="ShowModal" class="px-2 py-1 text-sm rounded-md hover:bg-gray-100 cursor-pointer">
                         ...
-                    </div>
+                    </button>
                 }
                 else
                 {
-                    <a href="#" class="px-2 py-1 text-sm rounded-md hover:bg-gray-100">
+                    <button @onclick="() => SetPage(num)" class="px-2 py-1 text-sm rounded-md hover:bg-gray-100">
                         @num
-                    </a>
+                    </button>
                 }
             }
         </div>
@@ -55,7 +55,7 @@
             </div>
         </BodyContent>
         <FooterContent>
-            <ComButton OnClickCallback="SetPage">
+            <ComButton OnClickCallback="() => SetPage(_pageNumberInput)">
                 Potwierdź
             </ComButton>
         </FooterContent>
@@ -81,11 +81,11 @@
         await OnPageChanged.InvokeAsync(CurrentPage == PagesAmount ? 1 : CurrentPage + 1);
     }
 
-    async Task SetPage()
+    async Task SetPage(int page)
     {
-        var newPage = _pageNumberInput > 0 && _pageNumberInput <= PagesAmount
-            ? _pageNumberInput
-            : _pageNumberInput > PagesAmount
+        var newPage = page > 0 && page <= PagesAmount
+            ? page
+            : page > PagesAmount
                 ? PagesAmount
                 : 1;
         _modal?.Hide();

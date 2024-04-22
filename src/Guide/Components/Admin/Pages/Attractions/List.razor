@@ -1,4 +1,5 @@
-﻿@using Guide.Components.Admin.Shared
+﻿@using System.Text.RegularExpressions
+@using Guide.Components.Admin.Shared
 @using Guide.Domain.Entities
 
 @page "/admin"
@@ -24,9 +25,15 @@ else
 {
     <ComTable>
         <HeadContent>
-            <ComTh sortable>Id</ComTh>
-            <ComTh sortable>Kategoria</ComTh>
-            <ComTh sortable>Nazwa</ComTh>
+            <ComTh sortable OnClickCallback="@(async () => await ChangeOrder("id"))">
+                Id
+            </ComTh>
+            <ComTh sortable OnClickCallback="@(async () => await ChangeOrder("category"))">
+                Kategoria
+            </ComTh>
+            <ComTh sortable OnClickCallback="@(async () => await ChangeOrder("name"))">
+                Nazwa
+            </ComTh>
             <ComTh/>
         </HeadContent>
         <BodyContent>
@@ -51,19 +58,34 @@ else
         </BodyContent>
     </ComTable>
 
-    <ComPagination CurrentPage="CurrentPage" PagesAmount="PagesAmount" OnPageChanged="page => ChangePage(page)"/>
+    <ComPagination CurrentPage="Page" PagesAmount="PagesAmount" OnPageChanged="async page => await ChangePage(page)"/>
 }
 
 @code {
+    [Parameter] [SupplyParameterFromQuery] public int Page { get; set; }
+    [Parameter] [SupplyParameterFromQuery] public int Limit { get; set; }
+    [Parameter] [SupplyParameterFromQuery] public string? OrderBy { get; set; }
     List<Attraction>? Attractions { get; set; }
-    int CurrentPage { get; set; } = 1;
-    int PageSize { get; set; } = 10;
     int PagesAmount { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        await ChangePage(CurrentPage, true);
-        Console.WriteLine(PagesAmount);
+        await LoadAttractions();
+    }
+
+    async Task LoadAttractions()
+    {
+        if (Limit < 5) Limit = 10;
+        else if (Limit > 50) Limit = 50;
+
+        PagesAmount = (int)Math.Ceiling(await AttractionService.GetCount() / (double)Limit);
+
+        if (Page < 1) Page = 1;
+        else if (Page > PagesAmount) Page = PagesAmount;
+
+        Attractions = await AttractionService.GetAll(Page, Limit, OrderBy);
+
+        await InvokeAsync(StateHasChanged);
     }
 
     void Edit(Attraction attraction)
@@ -74,17 +96,38 @@ else
     async Task Delete(Attraction attraction)
     {
         await AttractionService.Delete(attraction.Id);
-        await ChangePage(CurrentPage, true);
-        StateHasChanged();
+        await LoadAttractions();
     }
 
-    async Task ChangePage(int newPage, bool updatePagesAmount = false)
+    async Task ChangePage(int? newPage = null)
     {
-        if (updatePagesAmount)
-            PagesAmount = (int)Math.Ceiling(await AttractionService.GetCount() / (double)PageSize);
-        Attractions = await AttractionService.GetPage(newPage, PageSize);
-        CurrentPage = newPage;
-        StateHasChanged();
+        Page = newPage ?? Page;
+        var uri = $"/admin/attractions?page={Page}&limit={Limit}";
+
+        if (!string.IsNullOrEmpty(OrderBy))
+        {
+            uri += $"&orderBy={OrderBy}";
+        }
+
+        await LoadAttractions();
+        NavigationManager.NavigateTo(uri);
+    }
+
+    async Task ChangeOrder(string column)
+    {
+        var rg = new Regex($"^{column} (asc|desc)$", RegexOptions.IgnoreCase);
+        
+        if (string.IsNullOrEmpty(OrderBy) || !rg.IsMatch(OrderBy))
+        {
+            OrderBy = $"{column} asc";
+        }
+        else
+        {
+            var dir = OrderBy.Split(" ")[1];
+            OrderBy = dir.ToLower() == "asc" ? $"{column} desc" : $"{column} asc";
+        }
+
+        await ChangePage();
     }
 
 }
