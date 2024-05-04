@@ -14,10 +14,16 @@ public class AttractionService(GuideDbContext dbContext) : IAttractionService
         return await dbContext.Attractions.FindAsync(id);
     }
 
-    public async Task<List<Attraction>> GetAll(int page = 0, int limit = 0, string? orderBy = null)
+    public async Task<List<Attraction>> GetAll(int page = 0, int limit = 0, string? orderBy = null,
+        string? search = null)
     {
         var query = dbContext.Attractions.AsNoTracking();
         var rg = new Regex(@"^\w+ (asc|desc)$", RegexOptions.IgnoreCase);
+
+        if (!string.IsNullOrEmpty(search))
+        {
+            query = query.Where(x => x.Name.Contains(search) || x.Category.Contains(search));
+        }
 
         if (string.IsNullOrEmpty(orderBy) || !rg.IsMatch(orderBy))
         {
@@ -88,17 +94,15 @@ public class AttractionService(GuideDbContext dbContext) : IAttractionService
         }
     }
 
-    public async Task<int> GetCount()
+    public async Task<int> GetCount(string? search = null)
     {
-        return await dbContext.Attractions.Select(x => x.Id).CountAsync();
-    }
+        if (!string.IsNullOrEmpty(search))
+        {
+            return await dbContext.Attractions
+                .Where(x => x.Name.Contains(search) || x.Category.Contains(search))
+                .CountAsync();
+        }
 
-    public async Task<List<Attraction>> GetPage(int page, int pageSize)
-    {
-        return await dbContext.Attractions.AsNoTracking()
-            .OrderBy(x => x.Id)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
+        return await dbContext.Attractions.CountAsync();
     }
 }
