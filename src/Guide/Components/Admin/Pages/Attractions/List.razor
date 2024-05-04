@@ -11,8 +11,8 @@
 
 <PageTitle>Atrakcje - Panel Administratora</PageTitle>
 
-<div class="flex mb-8">
-    <a class="btn bg-blue-700 hover:bg-blue-900" href="admin/attractions/create">
+<div class="d-flex mb-3">
+    <a class="btn btn-primary" href="admin/attractions/create">
         Nowa atrakcja
     </a>
 </div>
@@ -23,40 +23,44 @@
 }
 else
 {
-    <ComTable>
-        <HeadContent>
-            <ComTh sortable OnClickCallback="@(async () => await ChangeOrder("id"))">
-                Id
-            </ComTh>
-            <ComTh sortable OnClickCallback="@(async () => await ChangeOrder("category"))">
-                Kategoria
-            </ComTh>
-            <ComTh sortable OnClickCallback="@(async () => await ChangeOrder("name"))">
-                Nazwa
-            </ComTh>
-            <ComTh/>
-        </HeadContent>
-        <BodyContent>
-            @foreach (var attraction in Attractions)
-            {
+    <div class="table-responsive">
+        <table class="table align-middle table-striped table-bordered table-hover">
+            <thead>
                 <tr>
-                    <ComTd>@attraction.Id</ComTd>
-                    <ComTd>@attraction.Category</ComTd>
-                    <ComTd>@attraction.Name</ComTd>
-                    <ComTd>
-                        <div class="flex items-center gap-x-4">
-                            <button class="btn bg-blue-700 hover:bg-blue-900" @onclick="() => Edit(attraction)">
-                                Edytuj
-                            </button>
-                            <button class="btn bg-red-500 hover:bg-red-700" @onclick="() => Delete(attraction)">
-                                Usuń
-                            </button>
-                        </div>
-                    </ComTd>
+                    <th @onclick="@(async () => await ChangeOrder("id"))">
+                        Id
+                    </th>
+                    <th @onclick="@(async () => await ChangeOrder("category"))">
+                        Kategoria
+                    </th>
+                    <th @onclick="@(async () => await ChangeOrder("name"))">
+                        Nazwa
+                    </th>
+                    <th/>
                 </tr>
-            }
-        </BodyContent>
-    </ComTable>
+            </thead>
+            <tbody>
+                @foreach (var attraction in Attractions)
+                {
+                    <tr>
+                        <td>@attraction.Id</td>
+                        <td>@attraction.Category</td>
+                        <td>@attraction.Name</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary" @onclick="() => Edit(attraction)">
+                                    Edytuj
+                                </button>
+                                <button class="btn btn-danger" @onclick="() => Delete(attraction)">
+                                    Usuń
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
     <ComPagination CurrentPage="Page" PagesAmount="PagesAmount" OnPageChanged="async page => await ChangePage(page)"/>
 }
@@ -71,6 +75,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         await LoadAttractions();
+        Console.WriteLine($"\n\n\n init \n\n\n");
     }
 
     async Task LoadAttractions()
@@ -116,7 +121,7 @@ else
     async Task ChangeOrder(string column)
     {
         var rg = new Regex($"^{column} (asc|desc)$", RegexOptions.IgnoreCase);
-        
+
         if (string.IsNullOrEmpty(OrderBy) || !rg.IsMatch(OrderBy))
         {
             OrderBy = $"{column} asc";

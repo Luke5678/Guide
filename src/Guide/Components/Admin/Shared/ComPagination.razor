@@ -1,65 +1,72 @@
 ﻿@if (PagesAmount > 1 && CurrentPage > 0)
 {
-    <div class="flex items-center justify-between mt-6">
-        <button @onclick="Previous"
-                class="flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100">
-            <img src="arrow-left.svg" alt="Previous" class="w-5 h-5">
-            <span>
-                Wstecz
-            </span>
-        </button>
+    <ul class="pagination justify-content-center">
+        <li class="page-item">
+            <div class="page-link" @onclick="Previous" @onclick:preventDefault>
+                <span aria-hidden="true">&laquo;</span>
+            </div>
+        </li>
 
-        <div class="items-center hidden md:flex gap-x-3">
-            @foreach (var num in GetPageNumbers())
+        @foreach (var num in GetPageNumbers())
+        {
+            if (num == CurrentPage)
             {
-                if (num == CurrentPage)
-                {
-                    <button @onclick="() => SetPage(num)" class="px-2 py-1 text-sm text-blue-500 rounded-md bg-blue-100/60">
+                <li class="page-item active">
+                    <div class="page-link" @onclick="() => SetPage(num)" @onclick:preventDefault>
                         @num
-                    </button>
-                }
-                else if (num == -1)
-                {
-                    <button @onclick="ShowModal" class="px-2 py-1 text-sm rounded-md hover:bg-gray-100 cursor-pointer">
-                        ...
-                    </button>
-                }
-                else
-                {
-                    <button @onclick="() => SetPage(num)" class="px-2 py-1 text-sm rounded-md hover:bg-gray-100">
-                        @num
-                    </button>
-                }
+                    </div>
+                </li>
             }
-        </div>
+            else if (num == -1)
+            {
+                <li class="page-item">
+                    <div class="page-link" data-bs-toggle="modal" data-bs-target="#pagination-modal">
+                        ...
+                    </div>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <div class="page-link" @onclick="() => SetPage(num)" @onclick:preventDefault>
+                        @num
+                    </div>
+                </li>
+            }
+        }
 
-        <button @onclick="Next"
-                class="flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100">
-            <span>
-                Dalej
-            </span>
-            <img src="arrow-left.svg" alt="Next" class="w-5 h-5 rotate-180">
-        </button>
-    </div>
+        <li class="page-item">
+            <div class="page-link" @onclick="Next" @onclick:preventDefault>
+                <span aria-hidden="true">&raquo;</span>
+            </div>
+        </li>
+    </ul>
 
-    <ComModal Center="true" @ref="_modal">
-        <TitleContent>
-            <div>Wprowadź numer strony</div>
-        </TitleContent>
-        <BodyContent>
-            <div class="flex justify-center">
-                <div class="max-w-[150px]">
-                    <label for="nr_strony">Numer strony</label>
-                    <input type="number" id="nr_strony" name="nr_strony" @bind="_pageNumberInput">
+    <div class="modal fade" id="pagination-modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Wprowadź numer strony</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zamknij"></button>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <label for="nr_strony" class="col-form-label">Numer strony</label>
+                        <input type="number" id="nr_strony" name="nr_strony" @bind="_pageNumberInput"
+                               class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Anuluj
+                    </button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @onclick="() => SetPage(_pageNumberInput)">
+                        Potwierdź
+                    </button>
                 </div>
             </div>
-        </BodyContent>
-        <FooterContent>
-            <ComButton OnClickCallback="() => SetPage(_pageNumberInput)">
-                Potwierdź
-            </ComButton>
-        </FooterContent>
-    </ComModal>
+        </div>
+    </div>
 }
 
 @code {
@@ -68,7 +75,6 @@
 
     [Parameter] public EventCallback<int> OnPageChanged { get; set; }
 
-    private ComModal? _modal;
     private int _pageNumberInput;
 
     async Task Previous()
@@ -88,14 +94,7 @@
             : page > PagesAmount
                 ? PagesAmount
                 : 1;
-        _modal?.Hide();
         await OnPageChanged.InvokeAsync(newPage);
-    }
-
-    void ShowModal()
-    {
-        _pageNumberInput = CurrentPage;
-        _modal?.Show();
     }
 
     private int[] GetPageNumbers()
@@ -107,7 +106,7 @@
 
         var numbers = new List<int> { 1 };
 
-        if (CurrentPage < 4)
+        if (CurrentPage < 5)
         {
             numbers.AddRange([2, 3, 4, 5, -1, PagesAmount]);
         }

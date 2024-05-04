@@ -10,24 +10,22 @@
 
 <EditForm Model="_attraction" OnValidSubmit="HandleSubmit">
     <FluentValidationValidator/>
-    <div class="flex flex-col gap-4 mb-4">
-        <div>
-            <label>Nazwa</label>
-            <InputText @bind-Value="_attraction.Name">@_attraction.Name</InputText>
-            <ValidationMessage For="() => _attraction.Name"/>
-        </div>
-        <div>
-            <label>Kategoria</label>
-            <InputText @bind-Value="_attraction.Category">@_attraction.Category</InputText>
-            <ValidationMessage For="() => _attraction.Category"/>
-        </div>
-        <div>
-            <label>Opis</label>
-            <InputTextArea @bind-Value="_attraction.Description" rows="4">@_attraction.Description</InputTextArea>
-            <ValidationMessage For="() => _attraction.Description"/>
-        </div>
+    <div class="mb-3">
+        <label class="form-label">Nazwa</label>
+        <InputText class="form-control" @bind-Value="_attraction.Name">@_attraction.Name</InputText>
+        <ValidationMessage For="() => _attraction.Name"/>
     </div>
-    <button type="submit" class="btn bg-blue-700 hover:bg-blue-90">Zapisz</button>
+    <div class="mb-3">
+        <label class="form-label">Kategoria</label>
+        <InputText class="form-control" @bind-Value="_attraction.Category">@_attraction.Category</InputText>
+        <ValidationMessage For="() => _attraction.Category"/>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Opis</label>
+        <InputTextArea class="form-control" @bind-Value="_attraction.Description" rows="4">@_attraction.Description</InputTextArea>
+        <ValidationMessage For="() => _attraction.Description"/>
+    </div>
+    <button type="submit" class="btn btn-primary">Zapisz</button>
 </EditForm>
 
 @code {
