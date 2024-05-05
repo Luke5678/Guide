@@ -3,7 +3,6 @@
 @using Guide.Components.Admin.Shared
 @using Guide.Domain.Entities
 
-@page "/admin"
 @page "/admin/attractions"
 @rendermode InteractiveServer
 
@@ -12,7 +11,7 @@
 
 <PageTitle>Atrakcje - Panel Administratora</PageTitle>
 
-<div class="row">
+<div class="row mb-4 mb-sm-0">
     <div class="d-flex">
         <a class="btn btn-primary" href="admin/attractions/create">
             Nowa atrakcja
@@ -21,14 +20,13 @@
 </div>
 
 <div class="row align-items-end mb-3">
-    <div class="col-6">
+    <div class="col-12 col-sm col-lg-6 mb-3 mb-sm-0">
         <div class="d-flex">
             <input class="form-control me-2" type="search" placeholder="Szukaj" @bind="_searchInput">
             <button class="btn btn-success" type="submit" @onclick="ChangeSearch">Szukaj</button>
         </div>
     </div>
-    <div class="col"></div>
-    <div class="col-2">
+    <div class="col-12 col-sm-2 ms-auto">
         <label class="form-label">Ilość wierszy</label>
         <select class="form-select" @onchange="ChangeLimit">
             @foreach (var limit in _limits)
