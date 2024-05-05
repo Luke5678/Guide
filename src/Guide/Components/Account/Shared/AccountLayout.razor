@@ -1,14 +1,16 @@
 ﻿@inherits LayoutComponentBase
-@layout Layout.Main.MainLayout
+
 @inject NavigationManager NavigationManager
 
 @if (HttpContext is null)
 {
-    <p>Loading...</p>
+    <p>Ładowanie...</p>
 }
 else
 {
-    @Body
+    <main class="container d-flex flex-column justify-content-center vh-100">
+        @Body
+    </main>
 }
 
 @code {

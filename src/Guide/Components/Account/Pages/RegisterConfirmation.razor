@@ -1,4 +1,4 @@
-﻿@page "/Account/RegisterConfirmation"
+﻿@page "/account/register-confirmation"
 
 @using System.Text
 @using Microsoft.AspNetCore.Identity
@@ -11,23 +11,33 @@
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
 
-<PageTitle>Register confirmation</PageTitle>
+<PageTitle>Rejestracja - Panel Administratora</PageTitle>
 
-<h1>Register confirmation</h1>
+<div class="row justify-content-center">
+    <div style="max-width: 400px;">
+        <h1 class="fs-2">Potwierdzenie rejestracji</h1>
 
-<StatusMessage Message="@statusMessage"/>
+        <StatusMessage Message="@statusMessage"/>
 
-@if (emailConfirmationLink is not null)
-{
-    <p>
-        This app does not currently have a real email sender registered, see <a href="https://aka.ms/aspaccountconf">these docs</a> for how to configure a real email sender.
-        Normally this would be emailed: <a href="@emailConfirmationLink">Click here to confirm your account</a>
-    </p>
-}
-else
-{
-    <p>Please check your email to confirm your account.</p>
-}
+        @if (emailConfirmationLink is not null)
+        {
+            <p>
+                This app does not currently have a real email sender registered, see <a href="https://aka.ms/aspaccountconf">these docs</a> for how to configure a real email sender.
+                Normally this would be emailed: <a href="@emailConfirmationLink">Click here to confirm your account</a>
+            </p>
+        }
+        else
+        {
+            <p>Sprawdź swoją skrzynkę email, aby aktywować swoje konto.</p>
+        }
+        <a href="/account/login" class="btn btn-success">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5"></path>
+            </svg>
+            Powrót do logowania
+        </a>
+    </div>
+</div>
 
 @code {
     private string? emailConfirmationLink;
@@ -40,7 +50,7 @@ else
     [SupplyParameterFromQuery] private string? ReturnUrl { get; set; }
 
     protected override async Task OnInitializedAsync()
-    {
+    {   
         if (Email is null)
         {
             RedirectManager.RedirectTo("");
@@ -59,7 +69,7 @@ else
             var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
             emailConfirmationLink = NavigationManager.GetUriWithQueryParameters(
-                NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
+                NavigationManager.ToAbsoluteUri("account/confirm-email").AbsoluteUri,
                 new Dictionary<string, object?> { ["userId"] = userId, ["code"] = code, ["returnUrl"] = ReturnUrl });
         }
     }

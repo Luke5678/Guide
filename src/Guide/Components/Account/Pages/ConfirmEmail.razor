@@ -1,4 +1,4 @@
-﻿@page "/Account/ConfirmEmail"
+﻿@page "/account/confirm-email"
 
 @using System.Text
 @using Microsoft.AspNetCore.Identity
@@ -9,10 +9,20 @@
 @inject UserManager<User> UserManager
 @inject IdentityRedirectManager RedirectManager
 
-<PageTitle>Confirm email</PageTitle>
+<PageTitle>Rejestracja - Panel Administratora</PageTitle>
 
-<h1>Confirm email</h1>
-<StatusMessage Message="@statusMessage"/>
+<div class="row justify-content-center">
+    <div style="max-width: 400px;">
+        <h1 class="fs-2">Potwierdzenie adresu email</h1>
+        <StatusMessage Message="@statusMessage"/>
+        <a href="/account/login" class="btn btn-success">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5"></path>
+            </svg>
+            Powrót do logowania
+        </a>
+    </div>
+</div>
 
 @code {
     private string? statusMessage;
@@ -34,13 +44,13 @@
         if (user is null)
         {
             HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
-            statusMessage = $"Error loading user with ID {UserId}";
+            statusMessage = $"Błąd konta o ID {UserId}";
         }
         else
         {
             var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(Code));
             var result = await UserManager.ConfirmEmailAsync(user, code);
-            statusMessage = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
+            statusMessage = result.Succeeded ? "Twoje konto zostało aktywowane." : "Wystąpił błąd.";
         }
     }
 

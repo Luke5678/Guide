@@ -1,4 +1,4 @@
-﻿@page "/Account/Register"
+﻿@page "/account/register"
 
 @using System.ComponentModel.DataAnnotations
 @using System.Text
@@ -16,42 +16,39 @@
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
 
-<PageTitle>Register</PageTitle>
+<PageTitle>Rejestracja - Panel Administratora</PageTitle>
 
-<h1>Register</h1>
-
-<div class="row">
-    <div class="col-md-4">
+<div class="row justify-content-center">
+    <div style="max-width: 400px;">
+        <h1 class="fs-2">Rejestracja</h1>
         <StatusMessage Message="@Message"/>
         <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
             <DataAnnotationsValidator/>
-            <h2>Create a new account.</h2>
+            <p>Tworzenie nowego konta.</p>
             <hr/>
-            <ValidationSummary class="text-danger" role="alert"/>
             <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com"/>
+                <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" placeholder="name@example.com"/>
                 <label for="email">Email</label>
                 <ValidationMessage For="() => Input.Email" class="text-danger"/>
             </div>
             <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password"/>
-                <label for="password">Password</label>
+                <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="new-password" placeholder="password"/>
+                <label for="password">Hasło</label>
                 <ValidationMessage For="() => Input.Password" class="text-danger"/>
             </div>
             <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password"/>
-                <label for="confirm-password">Confirm Password</label>
+                <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control" autocomplete="new-password" placeholder="password"/>
+                <label for="confirm-password">Powtórz Hasło</label>
                 <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger"/>
             </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Zarejestruj</button>
         </EditForm>
-    </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to register.</h3>
-            <hr/>
-            <ExternalLoginPicker/>
-        </section>
+        <a href="/account/login" class="btn btn-success mt-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5"></path>
+            </svg>
+            Powrót do logowania
+        </a>
     </div>
 </div>
 
@@ -85,7 +82,7 @@
         var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
         var callbackUrl = NavigationManager.GetUriWithQueryParameters(
-            NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
+            NavigationManager.ToAbsoluteUri("account/confirm-email").AbsoluteUri,
             new Dictionary<string, object?> { ["userId"] = userId, ["code"] = code, ["returnUrl"] = ReturnUrl });
 
         await EmailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
@@ -93,7 +90,7 @@
         if (UserManager.Options.SignIn.RequireConfirmedAccount)
         {
             RedirectManager.RedirectTo(
-                "Account/RegisterConfirmation",
+                "account/register-confirmation",
                 new() { ["email"] = Input.Email, ["returnUrl"] = ReturnUrl });
         }
 

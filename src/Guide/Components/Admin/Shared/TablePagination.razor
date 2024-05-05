@@ -72,10 +72,15 @@
 @code {
     [Parameter] public int CurrentPage { get; set; }
     [Parameter] public int PagesAmount { get; set; }
-
     [Parameter] public EventCallback<int> OnPageChanged { get; set; }
 
     private int _pageNumberInput;
+
+    protected override Task OnParametersSetAsync()
+    {
+        _pageNumberInput = CurrentPage;
+        return Task.CompletedTask;
+    }
 
     async Task Previous()
     {
