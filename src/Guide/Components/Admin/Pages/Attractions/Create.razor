@@ -1,40 +1,40 @@
-﻿@using Guide.Domain.Entities
-
-@page "/admin/attractions/create"
-@rendermode InteractiveServer
-
-@inject IAttractionService AttractionService
-@inject NavigationManager NavigationManager
-
-<PageTitle>Miejsca - Panel Administratora</PageTitle>
-
-<EditForm Model="_attraction" OnValidSubmit="HandleSubmit" class="mt-4">
-    <FluentValidationValidator/>
-    <div class="mb-3">
-        <label class="form-label">Nazwa</label>
-        <InputText class="form-control" @bind-Value="_attraction.Name">@_attraction.Name</InputText>
-        <ValidationMessage For="() => _attraction.Name"/>
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Kategoria</label>
-        <InputText class="form-control" @bind-Value="_attraction.Category">@_attraction.Category</InputText>
-        <ValidationMessage For="() => _attraction.Category"/>
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Opis</label>
-        <InputTextArea class="form-control" @bind-Value="_attraction.Description" rows="4">@_attraction.Description</InputTextArea>
-        <ValidationMessage For="() => _attraction.Description"/>
-    </div>
-    <button type="submit" class="btn btn-primary">Zapisz</button>
-</EditForm>
-
-@code {
-    readonly Attraction _attraction = new();
-
-    async Task HandleSubmit()
-    {
-        await AttractionService.Create(_attraction);
-        NavigationManager.NavigateTo("/admin/attractions");
-    }
-
-}
+﻿@* @using Guide.Domain.Entities *@
+@* *@
+@* @page "/admin/attractions/create" *@
+@* @rendermode InteractiveServer *@
+@* *@
+@* @inject IAttractionService AttractionService *@
+@* @inject NavigationManager NavigationManager *@
+@* *@
+@* <PageTitle>Miejsca - Panel Administratora</PageTitle> *@
+@* *@
+@* <EditForm Model="_attraction" OnValidSubmit="HandleSubmit" class="mt-4"> *@
+@*     <FluentValidationValidator/> *@
+@*     <div class="mb-3"> *@
+@*         <label class="form-label">Nazwa</label> *@
+@*         <InputText class="form-control" @bind-Value="_attraction.Name">@_attraction.Name</InputText> *@
+@*         <ValidationMessage For="() => _attraction.Name"/> *@
+@*     </div> *@
+@*     <div class="mb-3"> *@
+@*         <label class="form-label">Kategoria</label> *@
+@*         <InputText class="form-control" @bind-Value="_attraction.Category">@_attraction.Category</InputText> *@
+@*         <ValidationMessage For="() => _attraction.Category"/> *@
+@*     </div> *@
+@*     <div class="mb-3"> *@
+@*         <label class="form-label">Opis</label> *@
+@*         <InputTextArea class="form-control" @bind-Value="_attraction.Description" rows="4">@_attraction.Description</InputTextArea> *@
+@*         <ValidationMessage For="() => _attraction.Description"/> *@
+@*     </div> *@
+@*     <button type="submit" class="btn btn-primary">Zapisz</button> *@
+@* </EditForm> *@
+@* *@
+@* @code { *@
+@*     readonly Attraction _attraction = new(); *@
+@* *@
+@*     async Task HandleSubmit() *@
+@*     { *@
+@*         await AttractionService.Create(_attraction); *@
+@*         NavigationManager.NavigateTo("/admin/attractions"); *@
+@*     } *@
+@* *@
+@* } *@

@@ -1,6 +1,5 @@
+using Guide.Application;
 using Guide.Common.Account;
-using Guide.Common.Interfaces;
-using Guide.Common.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Guide.Components;
@@ -52,7 +51,7 @@ try
 
     builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
 
-    builder.Services.AddScoped<IAttractionService, AttractionService>();
+    builder.Services.AddApplication(builder.Configuration);
 
     var app = builder.Build();
 

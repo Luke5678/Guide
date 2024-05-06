@@ -14,13 +14,13 @@ public class GuideDbContext(
     : IdentityDbContext<User>(options)
 {
     public DbSet<Attraction> Attractions { get; set; }
+    public DbSet<AttractionTranslation> AttractionTranslations { get; set; }
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<CategoryTranslation> CategoryTranslations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-
-        builder.Entity<User>().HasQueryFilter(x => !x.IsDeleted);
-        builder.Entity<Attraction>().HasQueryFilter(x => x.Deleted == null);
 
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }

@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Guide.Domain\Guide.Domain.csproj"/>
+        <ProjectReference Include="..\Guide.Infrastructure\Guide.Infrastructure.csproj"/>
+        <ProjectReference Include="..\Guide.Shared\Guide.Shared.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="13.0.1" />
+        <PackageReference Include="FluentValidation" Version="11.9.1"/>
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.1" />
+        <PackageReference Include="MediatR" Version="12.2.0"/>
+        <PackageReference Include="Bogus" Version="35.5.0"/>
+    </ItemGroup>
+
+</Project>

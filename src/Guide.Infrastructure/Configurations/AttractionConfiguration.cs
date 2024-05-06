@@ -11,8 +11,9 @@ public class AttractionConfiguration : AuditableEntityConfiguration<Attraction>
     {
         base.Configure(builder);
 
-        builder.Property(t => t.Name).IsRequired();
-        builder.Property(t => t.Description).IsRequired();
-        builder.Property(t => t.Category).IsRequired();
+        builder.HasMany(c => c.Categories).WithMany(x => x.Attractions);
+
+        builder.HasMany(c => c.Translations)
+            .WithOne(t => t.Attraction);
     }
 }
