@@ -5,14 +5,12 @@ using Guide.Infrastructure.Common;
 
 namespace Guide.Infrastructure.Configurations;
 
-public class AttractionTranslationConfiguration : AuditableEntityConfiguration<AttractionTranslation>
+public class AttractionTranslationConfiguration : IEntityTypeConfiguration<AttractionTranslation>
 {
-    public override void Configure(EntityTypeBuilder<AttractionTranslation> builder)
+    public void Configure(EntityTypeBuilder<AttractionTranslation> builder)
     {
-        base.Configure(builder);
-
-        builder.Property(t => t.LanguageCode).IsRequired();
-        builder.Property(t => t.Name).IsRequired();
-        builder.Property(t => t.Description).IsRequired();
+        builder.Property(t => t.LanguageCode).HasMaxLength(2).IsRequired();
+        builder.Property(t => t.Name).HasMaxLength(255).IsRequired();
+        builder.Property(t => t.Description).HasMaxLength(10240).IsRequired();
     }
 }

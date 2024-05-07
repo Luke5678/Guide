@@ -10,7 +10,6 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
     {
         builder.HasQueryFilter(x => x.Deleted == null);
 
-        builder.HasMany(x => x.Translations)
-            .WithOne(x => x.Category);
+        builder.HasMany(x => x.Translations).WithOne(x => x.Category);
     }
 }
