@@ -4,8 +4,11 @@ using Bogus;
 using MediatR;
 using Guide.Application.Common.Interfaces;
 using Guide.Application.Features.Attractions.Commands.CreateAttraction;
+using Guide.Application.Features.Attractions.Queries.GetAttraction;
+using Guide.Application.Features.Attractions.Queries.GetAttractions;
 using Guide.Domain.Entities;
 using Guide.Infrastructure;
+using Guide.Shared.Common.Dtos;
 using Guide.Shared.Common.Static;
 
 namespace Guide.Application.Common.Services;
@@ -20,7 +23,7 @@ public class AttractionService(GuideDbContext dbContext, IMediator mediator) : I
                 .RuleFor(u => u.Name, (f, u) => f.Commerce.ProductName())
                 .RuleFor(u => u.Description, f => f.Lorem.Sentence());
 
-            foreach (var fake in faker.Generate(500))   
+            foreach (var fake in faker.Generate(500))
             {
                 await mediator.Send(fake);
             }
@@ -29,46 +32,20 @@ public class AttractionService(GuideDbContext dbContext, IMediator mediator) : I
         await mediator.Send(request);
     }
 
-    public async Task<Attraction?> Get(int id)
+    public async Task<AttractionDto> Get(int id)
     {
-        return await dbContext.Attractions.FindAsync(id);
+        var query = new GetAttractionQuery { Id = id };
+        return await mediator.Send(query);
     }
 
-    public async Task<List<Attraction>> GetAll(int page = 0, int limit = 0, string? orderBy = null,
+    public async Task<List<AttractionDto>> GetAll(int page = 0, int limit = 0, string? orderBy = null,
         string? search = null)
     {
-        var query = dbContext.Attractions.AsNoTracking();
-        var rg = new Regex(@"^\w+ (asc|desc)$", RegexOptions.IgnoreCase);
-
-        // if (!string.IsNullOrEmpty(search))
-        // {
-        //     query = query.Where(x => x.Name.Contains(search) || x.Category.Contains(search));
-        // }
-        //
-        // if (string.IsNullOrEmpty(orderBy) || !rg.IsMatch(orderBy))
-        // {
-        //     query = query.OrderBy(x => x.Id);
-        // }
-        // else
-        // {
-        //     query = orderBy.ToLower() switch
-        //     {
-        //         "id asc" => query.OrderBy(x => x.Id),
-        //         "id desc" => query.OrderByDescending(x => x.Id),
-        //         "name asc" => query.OrderBy(x => x.Name),
-        //         "name desc" => query.OrderByDescending(x => x.Name),
-        //         "category asc" => query.OrderBy(x => x.Category),
-        //         "category desc" => query.OrderByDescending(x => x.Category),
-        //         _ => query
-        //     };
-        // }
-        //
-        // if (page > 0 && limit > 0)
-        // {
-        //     query = query.Skip((page - 1) * limit).Take(limit);
-        // }
-
-        return await query.ToListAsync();
+        var query = new GetAttractionsQuery
+        {
+            Page = page, Limit = limit, OrderBy = orderBy, Search = search
+        };
+        return (await mediator.Send(query)).ToList();
     }
 
     public async Task Update(Attraction attraction)

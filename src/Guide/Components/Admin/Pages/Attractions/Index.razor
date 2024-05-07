@@ -1,185 +1,185 @@
-﻿@* @page "/admin/attractions" *@
-@* @rendermode InteractiveServer *@
-@* *@
-@* @inject IAttractionService AttractionService *@
-@* @inject NavigationManager NavigationManager *@
-@* *@
-@* <PageTitle>Atrakcje - Panel Administratora</PageTitle> *@
-@* *@
-@* <div class="row mb-4 mb-sm-0"> *@
-@*     <div class="d-flex"> *@
-@*         <a class="btn btn-primary" href="admin/attractions/create"> *@
-@*             Nowa atrakcja *@
-@*         </a> *@
-@*     </div> *@
-@* </div> *@
-@* *@
-@* <div class="row align-items-end mb-3"> *@
-@*     <div class="col-12 col-sm col-lg-6 mb-3 mb-sm-0"> *@
-@*         <div class="d-flex"> *@
-@*             <input class="form-control me-2" type="search" placeholder="Szukaj" @bind="_searchInput"> *@
-@*             <button class="btn btn-success" type="submit" @onclick="ChangeSearch">Szukaj</button> *@
-@*         </div> *@
-@*     </div> *@
-@*     <div class="col-12 col-sm-2 ms-auto"> *@
-@*         <label class="form-label">Ilość wierszy</label> *@
-@*         <select class="form-select" @onchange="ChangeLimit"> *@
-@*             @foreach (var limit in _limits) *@
-@*             { *@
-@*                 <option value="@limit" selected="@(limit == Limit)">@limit</option> *@
-@*             } *@
-@*         </select> *@
-@*     </div> *@
-@* </div> *@
-@* *@
-@* @if (Attractions == null) *@
-@* { *@
-@*     <div class="row">...</div> *@
-@* } *@
-@* else *@
-@* { *@
-@*     <div class="row"> *@
-@*         <div class="table-responsive"> *@
-@*             <table class="table align-middle table-striped table-bordered table-hover"> *@
-@*                 <thead> *@
-@*                     <tr> *@
-@*                         <th @onclick="@(async () => await ChangeOrder("id"))"> *@
-@*                             Id *@
-@*                         </th> *@
-@*                         <th @onclick="@(async () => await ChangeOrder("category"))"> *@
-@*                             Kategoria *@
-@*                         </th> *@
-@*                         <th @onclick="@(async () => await ChangeOrder("name"))"> *@
-@*                             Nazwa *@
-@*                         </th> *@
-@*                         <th/> *@
-@*                     </tr> *@
-@*                 </thead> *@
-@*                 <tbody> *@
-@*                     @foreach (var attraction in Attractions) *@
-@*                     { *@
-@*                         <tr> *@
-@*                             <td>@attraction.Id</td> *@
-@*                             <td>@attraction.Category</td> *@
-@*                             <td>@attraction.Name</td> *@
-@*                             <td> *@
-@*                                 <div class="d-flex gap-2"> *@
-@*                                     <button class="btn btn-primary" @onclick="() => Edit(attraction)"> *@
-@*                                         Edytuj *@
-@*                                     </button> *@
-@*                                     <button class="btn btn-danger" @onclick="() => Delete(attraction)"> *@
-@*                                         Usuń *@
-@*                                     </button> *@
-@*                                 </div> *@
-@*                             </td> *@
-@*                         </tr> *@
-@*                     } *@
-@*                 </tbody> *@
-@*             </table> *@
-@*         </div> *@
-@* *@
-@*         <TablePagination CurrentPage="Page" PagesAmount="PagesAmount" OnPageChanged="async page => await ChangePage(page)"/> *@
-@*     </div> *@
-@* } *@
-@* *@
-@* @code { *@
-@*     [Parameter] [SupplyParameterFromQuery] public int Page { get; set; } *@
-@*     [Parameter] [SupplyParameterFromQuery] public int Limit { get; set; } *@
-@*     [Parameter] [SupplyParameterFromQuery] public string? OrderBy { get; set; } *@
-@*     [Parameter] [SupplyParameterFromQuery] public string? Search { get; set; } *@
-@*     List<Attraction>? Attractions { get; set; } *@
-@*     int PagesAmount { get; set; } *@
-@* *@
-@*     private string? _searchInput; *@
-@*     readonly int[] _limits = [5, 10, 15, 20, 30]; *@
-@* *@
-@*     protected override async Task OnInitializedAsync() *@
-@*     { *@
-@*         await LoadAttractions(); *@
-@*         _searchInput = Search; *@
-@*     } *@
-@* *@
-@*     async Task LoadAttractions() *@
-@*     { *@
-@*         if (Limit < 5) Limit = 10; *@
-@*         else if (Limit > 50) Limit = 50; *@
-@* *@
-@*         PagesAmount = (int)Math.Ceiling(await AttractionService.GetCount(Search) / (double)Limit); *@
-@* *@
-@*         if (Page < 1) Page = 1; *@
-@*         else if (Page > PagesAmount) Page = PagesAmount; *@
-@* *@
-@*         Attractions = await AttractionService.GetAll(Page, Limit, OrderBy, Search); *@
-@* *@
-@*         await InvokeAsync(StateHasChanged); *@
-@*     } *@
-@* *@
-@*     void Edit(Attraction attraction) *@
-@*     { *@
-@*         NavigationManager.NavigateTo($"/admin/attractions/update/{attraction.Id}"); *@
-@*     } *@
-@* *@
-@*     async Task Delete(Attraction attraction) *@
-@*     { *@
-@*         await AttractionService.Delete(attraction.Id); *@
-@*         await LoadAttractions(); *@
-@*     } *@
-@* *@
-@*     async Task ChangePage(int? newPage = null) *@
-@*     { *@
-@*         Page = newPage ?? Page; *@
-@* *@
-@*         var uri = new Uri(NavigationManager.Uri); *@
-@*         var query = HttpUtility.ParseQueryString(uri.Query); *@
-@* *@
-@*         query["page"] = Page.ToString(); *@
-@*         query["limit"] = Limit.ToString(); *@
-@*         query["orderBy"] = OrderBy; *@
-@*         query["search"] = Search; *@
-@* *@
-@*         if (string.IsNullOrWhiteSpace(OrderBy)) *@
-@*         { *@
-@*             query.Remove("orderBy"); *@
-@*         } *@
-@* *@
-@*         if (string.IsNullOrWhiteSpace(Search)) *@
-@*         { *@
-@*             query.Remove("search"); *@
-@*         } *@
-@* *@
-@*         var uriBuilder = new UriBuilder(uri) { Query = query.ToString() }; *@
-@* *@
-@*         await LoadAttractions(); *@
-@*         NavigationManager.NavigateTo(uriBuilder.Uri.ToString()); *@
-@*     } *@
-@* *@
-@*     async Task ChangeOrder(string column) *@
-@*     { *@
-@*         var rg = new Regex($"^{column} (asc|desc)$", RegexOptions.IgnoreCase); *@
-@* *@
-@*         if (string.IsNullOrEmpty(OrderBy) || !rg.IsMatch(OrderBy)) *@
-@*         { *@
-@*             OrderBy = $"{column} asc"; *@
-@*         } *@
-@*         else *@
-@*         { *@
-@*             var dir = OrderBy.Split(" ")[1]; *@
-@*             OrderBy = dir.ToLower() == "asc" ? $"{column} desc" : $"{column} asc"; *@
-@*         } *@
-@* *@
-@*         await ChangePage(); *@
-@*     } *@
-@* *@
-@*     async Task ChangeLimit(ChangeEventArgs e) *@
-@*     { *@
-@*         Limit = Convert.ToInt32(e.Value?.ToString()); *@
-@*         await ChangePage(); *@
-@*     } *@
-@* *@
-@*     async Task ChangeSearch() *@
-@*     { *@
-@*         Search = _searchInput; *@
-@*         await ChangePage(); *@
-@*     } *@
-@* *@
-@* } *@
+﻿@page "/admin/attractions"
+@rendermode InteractiveServer
+
+@inject IAttractionService AttractionService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Atrakcje - Panel Administratora</PageTitle>
+
+<div class="row mb-4 mb-sm-0">
+    <div class="d-flex">
+        <a class="btn btn-primary" href="admin/attractions/create">
+            Nowa atrakcja
+        </a>
+    </div>
+</div>
+
+<div class="row align-items-end mb-3">
+    <div class="col-12 col-sm col-lg-6 mb-3 mb-sm-0">
+        <div class="d-flex">
+            <input class="form-control me-2" type="search" placeholder="Szukaj" @bind="_searchInput">
+            <button class="btn btn-success" type="submit" @onclick="ChangeSearch">Szukaj</button>
+        </div>
+    </div>
+    <div class="col-12 col-sm-2 ms-auto">
+        <label class="form-label">Ilość wierszy</label>
+        <select class="form-select" @onchange="ChangeLimit">
+            @foreach (var limit in _limits)
+            {
+                <option value="@limit" selected="@(limit == Limit)">@limit</option>
+            }
+        </select>
+    </div>
+</div>
+
+@if (Attractions == null)
+{
+    <div class="row">...</div>
+}
+else
+{
+    <div class="row">
+        <div class="table-responsive">
+            <table class="table align-middle table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th @onclick="@(async () => await ChangeOrder("id"))">
+                            Id
+                        </th>
+                        <th @onclick="@(async () => await ChangeOrder("category"))">
+                            Kategoria
+                        </th>
+                        <th @onclick="@(async () => await ChangeOrder("name"))">
+                            Nazwa
+                        </th>
+                        <th/>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var attraction in Attractions)
+                    {
+                        <tr>
+                            <td>@attraction.Id</td>
+                            <td>@(string.Join(", ", attraction.Categories.Select(x => x.Name)))</td>
+                            <td>@attraction.Name</td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-primary" @onclick="() => Edit(attraction)">
+                                        Edytuj
+                                    </button>
+                                    <button class="btn btn-danger" @onclick="() => Delete(attraction)">
+                                        Usuń
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <TablePagination CurrentPage="Page" PagesAmount="PagesAmount" OnPageChanged="async page => await ChangePage(page)"/>
+    </div>
+}
+
+@code {
+    [Parameter] [SupplyParameterFromQuery] public int Page { get; set; }
+    [Parameter] [SupplyParameterFromQuery] public int Limit { get; set; }
+    [Parameter] [SupplyParameterFromQuery] public string? OrderBy { get; set; }
+    [Parameter] [SupplyParameterFromQuery] public string? Search { get; set; }
+    List<AttractionDto>? Attractions { get; set; }
+    int PagesAmount { get; set; }
+
+    private string? _searchInput;
+    readonly int[] _limits = [5, 10, 15, 20, 30];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAttractions();
+        _searchInput = Search;
+    }
+
+    async Task LoadAttractions()
+    {
+        if (Limit < 5) Limit = 10;
+        else if (Limit > 50) Limit = 50;
+
+        PagesAmount = (int)Math.Ceiling(await AttractionService.GetCount(Search) / (double)Limit);
+
+        if (Page < 1) Page = 1;
+        else if (Page > PagesAmount) Page = PagesAmount;
+
+        Attractions = await AttractionService.GetAll(Page, Limit, OrderBy, Search);
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    void Edit(AttractionDto attraction)
+    {
+        NavigationManager.NavigateTo($"/admin/attractions/update/{attraction.Id}");
+    }
+
+    async Task Delete(AttractionDto attraction)
+    {
+        await AttractionService.Delete(attraction.Id);
+        await LoadAttractions();
+    }
+
+    async Task ChangePage(int? newPage = null)
+    {
+        Page = newPage ?? Page;
+
+        var uri = new Uri(NavigationManager.Uri);
+        var query = HttpUtility.ParseQueryString(uri.Query);
+
+        query["page"] = Page.ToString();
+        query["limit"] = Limit.ToString();
+        query["orderBy"] = OrderBy;
+        query["search"] = Search;
+
+        if (string.IsNullOrWhiteSpace(OrderBy))
+        {
+            query.Remove("orderBy");
+        }
+
+        if (string.IsNullOrWhiteSpace(Search))
+        {
+            query.Remove("search");
+        }
+
+        var uriBuilder = new UriBuilder(uri) { Query = query.ToString() };
+
+        await LoadAttractions();
+        NavigationManager.NavigateTo(uriBuilder.Uri.ToString());
+    }
+
+    async Task ChangeOrder(string column)
+    {
+        var rg = new Regex($"^{column} (asc|desc)$", RegexOptions.IgnoreCase);
+
+        if (string.IsNullOrEmpty(OrderBy) || !rg.IsMatch(OrderBy))
+        {
+            OrderBy = $"{column} asc";
+        }
+        else
+        {
+            var dir = OrderBy.Split(" ")[1];
+            OrderBy = dir.ToLower() == "asc" ? $"{column} desc" : $"{column} asc";
+        }
+
+        await ChangePage();
+    }
+
+    async Task ChangeLimit(ChangeEventArgs e)
+    {
+        Limit = Convert.ToInt32(e.Value?.ToString());
+        await ChangePage();
+    }
+
+    async Task ChangeSearch()
+    {
+        Search = _searchInput;
+        await ChangePage();
+    }
+
+}

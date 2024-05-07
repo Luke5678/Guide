@@ -22,11 +22,12 @@ public class GetAttractionQueryHandler : IRequestHandler<GetAttractionQuery, Att
     {
         var lang = request.LanguageCode ?? LanguageCodes.Default;
 
-        var attraction = _dbContext.Attractions
+        var attraction = await _dbContext.Attractions
             .Include(x => x.Translations.Where(x => x.LanguageCode == lang))
             .Include(x => x.Categories)
             .ThenInclude(x => x.Translations.Where(x => x.LanguageCode == lang))
-            .Single(x => x.Id == request.Id);
+            .AsNoTracking()
+            .SingleOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
         return _mapper.Map<AttractionDto>(attraction);
     }

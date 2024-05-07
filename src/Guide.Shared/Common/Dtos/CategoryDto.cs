@@ -7,7 +7,7 @@ namespace Guide.Shared.Common.Dtos;
 public class CategoryDto : IMapFrom<Category>
 {
     public int Id { get; set; }
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     public void Mapping(Profile profile)
     {
