@@ -5,6 +5,7 @@ using MediatR;
 using Guide.Application.Common.Interfaces;
 using Guide.Application.Features.Attractions.Commands.CreateAttraction;
 using Guide.Application.Features.Attractions.Commands.UpdateAttraction;
+using Guide.Application.Features.Attractions.Queries.CountAttractions;
 using Guide.Application.Features.Attractions.Queries.GetAttraction;
 using Guide.Application.Features.Attractions.Queries.GetAttractions;
 using Guide.Domain.Entities;
@@ -35,8 +36,8 @@ public class AttractionService(GuideDbContext dbContext, IMediator mediator) : I
 
     public async Task<AttractionDto?> Get(int id)
     {
-        var query = new GetAttractionQuery { Id = id };
-        return await mediator.Send(query);
+        var request = new GetAttractionQuery { Id = id };
+        return await mediator.Send(request);
     }
 
     public async Task<List<AttractionDto>> GetAll(int page = 0, int limit = 0, string? orderBy = null,
@@ -67,13 +68,7 @@ public class AttractionService(GuideDbContext dbContext, IMediator mediator) : I
 
     public async Task<int> GetCount(string? search = null)
     {
-        // if (!string.IsNullOrEmpty(search))
-        // {
-        //     return await dbContext.Attractions
-        //         .Where(x => x.Name.Contains(search) || x.Category.Contains(search))
-        //         .CountAsync();
-        // }
-
-        return await dbContext.Attractions.CountAsync();
+        var request = new CountAttractionsQuery { Search = search};
+        return await mediator.Send(request);
     }
 }
