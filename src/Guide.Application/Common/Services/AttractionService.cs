@@ -4,6 +4,7 @@ using Bogus;
 using MediatR;
 using Guide.Application.Common.Interfaces;
 using Guide.Application.Features.Attractions.Commands.CreateAttraction;
+using Guide.Application.Features.Attractions.Commands.UpdateAttraction;
 using Guide.Application.Features.Attractions.Queries.GetAttraction;
 using Guide.Application.Features.Attractions.Queries.GetAttractions;
 using Guide.Domain.Entities;
@@ -32,7 +33,7 @@ public class AttractionService(GuideDbContext dbContext, IMediator mediator) : I
         await mediator.Send(request);
     }
 
-    public async Task<AttractionDto> Get(int id)
+    public async Task<AttractionDto?> Get(int id)
     {
         var query = new GetAttractionQuery { Id = id };
         return await mediator.Send(query);
@@ -48,17 +49,9 @@ public class AttractionService(GuideDbContext dbContext, IMediator mediator) : I
         return (await mediator.Send(query)).ToList();
     }
 
-    public async Task Update(Attraction attraction)
+    public async Task<AttractionDto?> Update(UpdateAttractionCommand request)
     {
-        var dbAttraction = await dbContext.Attractions.FindAsync(attraction.Id);
-
-        if (dbAttraction != null)
-        {
-            // dbAttraction.Name = attraction.Name;
-            // dbAttraction.Category = attraction.Category;
-            // dbAttraction.Description = attraction.Description;
-            await dbContext.SaveChangesAsync();
-        }
+        return await mediator.Send(request);
     }
 
     public async Task Delete(int id)
