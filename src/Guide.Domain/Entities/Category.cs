@@ -1,10 +1,10 @@
-﻿namespace Guide.Domain.Entities;
+﻿using Guide.Domain.Common;
 
-public class Category
+namespace Guide.Domain.Entities;
+
+public class Category : AuditableEntity
 {
-    public int Id { get; set; }
-    public DateTime? Deleted { get; set; }
-    public ICollection<CategoryTranslation> Translations { get; set; } = null!;
+    public ICollection<CategoryTranslation> Translations { get; set; } = new List<CategoryTranslation>();
     
-    public ICollection<Attraction> Attractions { get; set; } = null!;
+    public ICollection<Attraction> Attractions { get; set; } = new List<Attraction>();
 }

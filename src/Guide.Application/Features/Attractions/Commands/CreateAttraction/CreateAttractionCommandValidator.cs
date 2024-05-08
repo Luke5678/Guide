@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Guide.Shared.Common.Static;
 
 namespace Guide.Application.Features.Attractions.Commands.CreateAttraction;
 

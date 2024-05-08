@@ -1,0 +1,59 @@
+﻿@page "/admin/categories/update/{id:int}"
+@rendermode InteractiveServer
+
+@using Guide.Application.Features.Categories.Commands.UpdateCategory
+@using Guide.Shared.Common.Static
+
+@inject ICategoryService CategoryService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Kategorie - Panel Administratora</PageTitle>
+
+@if (_request != null)
+{
+    <EditForm Model="_request" OnValidSubmit="HandleSubmit">
+        <FluentValidationValidator/>
+        <div class="mb-3">
+            <label class="form-label">Nazwa</label>
+            <InputText class="form-control" @bind-Value="_request.Name">@_request.Name</InputText>
+            <ValidationMessage For="() => _request.Name"/>
+        </div>
+        <button type="submit" class="btn btn-primary">Zapisz</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public int? Id { get; set; }
+
+    UpdateCategoryCommand? _request;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!Id.HasValue)
+        {
+            NavigationManager.NavigateTo("/admin/categories");
+            return;
+        }
+
+        var category = await CategoryService.Get(Id.Value);
+        if (category == null)
+        {
+            NavigationManager.NavigateTo("/admin/categories");
+            return;
+        }
+
+        _request = new UpdateCategoryCommand
+        {
+            Id = category.Id,
+            LanguageCode = LanguageCodes.Default,
+            Name = category.Name
+        };
+    }
+
+    async Task HandleSubmit()
+    {
+        await CategoryService.Update(_request!);
+        NavigationManager.NavigateTo("/admin/categories");
+    }
+
+}

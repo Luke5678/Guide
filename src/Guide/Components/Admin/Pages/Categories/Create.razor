@@ -1,0 +1,30 @@
+﻿@page "/admin/categories/create"
+@rendermode InteractiveServer
+
+@using Guide.Application.Features.Categories.Commands.CreateCategory
+
+@inject ICategoryService CategoryService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Kategorie - Panel Administratora</PageTitle>
+
+<EditForm Model="_category" OnValidSubmit="HandleSubmit" class="mt-4">
+    <FluentValidationValidator/>
+    <div class="mb-3">
+        <label class="form-label">Nazwa</label>
+        <InputText class="form-control" @bind-Value="_category.Name">@_category.Name</InputText>
+        <ValidationMessage For="() => _category.Name"/>
+    </div>
+    <button type="submit" class="btn btn-primary">Zapisz</button>
+</EditForm>
+
+@code {
+    readonly CreateCategoryCommand _category = new();
+
+    async Task HandleSubmit()
+    {
+        await CategoryService.Create(_category);
+        NavigationManager.NavigateTo("/admin/categories");
+    }
+
+}
