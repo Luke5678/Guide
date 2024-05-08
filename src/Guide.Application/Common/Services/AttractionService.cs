@@ -4,6 +4,7 @@ using Bogus;
 using MediatR;
 using Guide.Application.Common.Interfaces;
 using Guide.Application.Features.Attractions.Commands.CreateAttraction;
+using Guide.Application.Features.Attractions.Commands.DeleteAttraction;
 using Guide.Application.Features.Attractions.Commands.UpdateAttraction;
 using Guide.Application.Features.Attractions.Queries.CountAttractions;
 using Guide.Application.Features.Attractions.Queries.GetAttraction;
@@ -55,20 +56,15 @@ public class AttractionService(GuideDbContext dbContext, IMediator mediator) : I
         return await mediator.Send(request);
     }
 
-    public async Task Delete(int id)
+    public async Task<bool> Delete(int id)
     {
-        var dbAttraction = await dbContext.Attractions.FindAsync(id);
-
-        if (dbAttraction != null)
-        {
-            dbContext.Remove(dbAttraction);
-            await dbContext.SaveChangesAsync();
-        }
+        var request = new DeleteAttractionCommand { Id = id };
+        return await mediator.Send(request);
     }
 
     public async Task<int> GetCount(string? search = null)
     {
-        var request = new CountAttractionsQuery { Search = search};
+        var request = new CountAttractionsQuery { Search = search };
         return await mediator.Send(request);
     }
 }

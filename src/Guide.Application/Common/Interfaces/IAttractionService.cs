@@ -10,6 +10,6 @@ public interface IAttractionService
     Task<AttractionDto?> Get(int id);
     Task<List<AttractionDto>> GetAll(int page = 0, int limit = 0, string? orderBy = null, string? search = null);
     Task<AttractionDto?> Update(UpdateAttractionCommand request);
-    Task Delete(int id);
+    Task<bool> Delete(int id);
     Task<int> GetCount(string? search = null);
 }
