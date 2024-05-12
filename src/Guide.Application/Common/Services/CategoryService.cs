@@ -1,18 +1,20 @@
-﻿using Guide.Application.Common.Interfaces;
+﻿using System.Globalization;
+using Guide.Application.Common.Interfaces;
 using Guide.Application.Features.Categories.Commands.CreateCategory;
 using Guide.Application.Features.Categories.Commands.DeleteCategory;
 using Guide.Application.Features.Categories.Commands.UpdateCategory;
 using Guide.Application.Features.Categories.Queries.CountCategories;
 using Guide.Application.Features.Categories.Queries.GetCategories;
 using Guide.Application.Features.Categories.Queries.GetCategory;
-using Guide.Infrastructure;
 using Guide.Shared.Common.Dtos;
 using MediatR;
 
 namespace Guide.Application.Common.Services;
 
-public class CategoryService(GuideDbContext dbContext, IMediator mediator) : ICategoryService
+public class CategoryService(IMediator mediator) : ICategoryService
 {
+    private readonly string _language = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+
     public async Task Create(CreateCategoryCommand request)
     {
         await mediator.Send(request);
@@ -20,7 +22,7 @@ public class CategoryService(GuideDbContext dbContext, IMediator mediator) : ICa
 
     public async Task<CategoryDto?> Get(int id)
     {
-        var request = new GetCategoryQuery { Id = id };
+        var request = new GetCategoryQuery { Id = id, LanguageCode = _language };
         return await mediator.Send(request);
     }
 
@@ -29,13 +31,14 @@ public class CategoryService(GuideDbContext dbContext, IMediator mediator) : ICa
     {
         var query = new GetCategoriesQuery
         {
-            Page = page, Limit = limit, OrderBy = orderBy, Search = search
+            Page = page, Limit = limit, OrderBy = orderBy, Search = search, LanguageCode = _language
         };
         return (await mediator.Send(query)).ToList();
     }
 
     public async Task<CategoryDto?> Update(UpdateCategoryCommand request)
     {
+        request.LanguageCode = _language;
         return await mediator.Send(request);
     }
 

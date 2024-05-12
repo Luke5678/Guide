@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Guide.Application", "src\Gu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Guide.Shared", "src\Guide.Shared\Guide.Shared.csproj", "{BF601009-7DC8-42D2-A5B0-7FE5067ED3E6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{454E0B67-8E87-4D7F-823E-FC7C71A81A29}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,5 +59,9 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2F1058A1-7DA5-4E92-910C-6B867FA3DA6D}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D47A1771-FC72-47A4-836E-74DBD633D36A} = {454E0B67-8E87-4D7F-823E-FC7C71A81A29}
+		{F4CC7098-F9B2-4D29-A307-C6B73A144C53} = {454E0B67-8E87-4D7F-823E-FC7C71A81A29}
 	EndGlobalSection
 EndGlobal

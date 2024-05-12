@@ -1,10 +1,13 @@
+using BitzArt.Blazor.Cookies;
 using Guide.Application;
+using Guide.Client.Common.Services;
 using Guide.Common.Account;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Guide.Components;
 using Guide.Domain.Entities;
 using Guide.Infrastructure;
+using Microsoft.AspNetCore.Localization;
 using Serilog;
 using Serilog.Events;
 
@@ -51,6 +54,21 @@ try
 
     builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
 
+    builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+    builder.Services.Configure<RequestLocalizationOptions>(options =>
+    {
+        options.SetDefaultCulture("pl");
+        options.AddSupportedCultures(["en", "pl"]);
+        options.AddSupportedUICultures(["en", "pl"]);
+        options.RequestCultureProviders = new List<IRequestCultureProvider>
+        {
+            new CookieRequestCultureProvider()
+        };
+    });
+
+    builder.AddBlazorCookies();
+    builder.Services.AddScoped<CultureCookieService>();
+    
     builder.Services.AddApplication(builder.Configuration);
 
     var app = builder.Build();
@@ -82,6 +100,8 @@ try
 
     // Add additional endpoints required by the Identity /Account Razor components.
     app.MapAdditionalIdentityEndpoints();
+
+    app.UseRequestLocalization();
 
     app.Run();
 }

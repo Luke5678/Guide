@@ -2,7 +2,6 @@
 @rendermode InteractiveServer
 
 @using Guide.Application.Features.Categories.Commands.UpdateCategory
-@using Guide.Shared.Common.Static
 
 @inject ICategoryService CategoryService
 @inject NavigationManager NavigationManager
@@ -11,6 +10,12 @@
 
 @if (_request != null)
 {
+    <div class="row mb-3">
+        <div class="col"></div>
+        <div class="col-12 col-md-2">
+            <LanguageSwitcher/>
+        </div>
+    </div>
     <EditForm Model="_request" OnValidSubmit="HandleSubmit">
         <FluentValidationValidator/>
         <div class="mb-3">
@@ -45,7 +50,6 @@
         _request = new UpdateCategoryCommand
         {
             Id = category.Id,
-            LanguageCode = LanguageCodes.Default,
             Name = category.Name
         };
     }

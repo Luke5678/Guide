@@ -7,33 +7,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Guide.Application.Features.Attractions.Queries.GetAttractions;
 
-public class GetAttractionsQueryHandler : IRequestHandler<GetAttractionsQuery, ICollection<AttractionDto>>
+public class GetAttractionsQueryHandler(GuideDbContext dbContext)
+    : IRequestHandler<GetAttractionsQuery, ICollection<AttractionDto>>
 {
-    private readonly GuideDbContext _dbContext;
-    private readonly IMapper _mapper;
-
-    public GetAttractionsQueryHandler(GuideDbContext dbContext, IMapper mapper)
-    {
-        _dbContext = dbContext;
-        _mapper = mapper;
-    }
-
     public async Task<ICollection<AttractionDto>> Handle(
         GetAttractionsQuery request,
         CancellationToken cancellationToken)
     {
         var lang = request.LanguageCode ?? LanguageCodes.Default;
 
-        var query = _dbContext.Attractions
-            .Include(x => x.Translations.Where(x => x.LanguageCode == lang))
-            .Include(x => x.Categories)
-            .ThenInclude(x => x.Translations.Where(x => x.LanguageCode == lang))
+        var query = dbContext.Attractions
             .Select(x => new AttractionDto
             {
-                Id = x.Id, Name = x.Translations.Single().Name,
+                Id = x.Id, Name = x.Translations.First(x => x.LanguageCode == lang).Name,
                 Categories = x.Categories.Select(x => new CategoryDto
                 {
-                    Id = x.Id, Name = x.Translations.Single().Name
+                    Id = x.Id, Name = x.Translations.First(x => x.LanguageCode == lang).Name
                 })
             })
             .AsNoTracking();

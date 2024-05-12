@@ -1,6 +1,4 @@
 ﻿@using Guide.Application.Features.Attractions.Commands.UpdateAttraction
-@using Guide.Domain.Entities
-@using Guide.Shared.Common.Static
 
 @page "/admin/attractions/update/{id:int}"
 @rendermode InteractiveServer
@@ -12,6 +10,12 @@
 
 @if (_request != null)
 {
+    <div class="row mb-3">
+        <div class="col"></div>
+        <div class="col-12 col-md-3 col-lg-2">
+            <LanguageSwitcher/>
+        </div>
+    </div>
     <EditForm Model="_request" OnValidSubmit="HandleSubmit">
         <FluentValidationValidator/>
         <div class="mb-3">
@@ -55,7 +59,7 @@
 
         _request = new UpdateAttractionCommand
         {
-            Id = attraction.Id, LanguageCode = LanguageCodes.Default,
+            Id = attraction.Id,
             Name = attraction.Name, Description = attraction.Description,
             Categories = attraction.Categories.Select(x => x.Id)
         };

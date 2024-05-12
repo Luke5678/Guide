@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using Microsoft.EntityFrameworkCore;
+﻿using System.Globalization;
 using Bogus;
 using MediatR;
 using Guide.Application.Common.Interfaces;
@@ -9,15 +8,15 @@ using Guide.Application.Features.Attractions.Commands.UpdateAttraction;
 using Guide.Application.Features.Attractions.Queries.CountAttractions;
 using Guide.Application.Features.Attractions.Queries.GetAttraction;
 using Guide.Application.Features.Attractions.Queries.GetAttractions;
-using Guide.Domain.Entities;
 using Guide.Infrastructure;
 using Guide.Shared.Common.Dtos;
-using Guide.Shared.Common.Static;
 
 namespace Guide.Application.Common.Services;
 
 public class AttractionService(GuideDbContext dbContext, IMediator mediator) : IAttractionService
 {
+    private readonly string _language = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+
     public async Task Create(CreateAttractionCommand request)
     {
         if (dbContext.Attractions.Count() < 500)
@@ -37,7 +36,7 @@ public class AttractionService(GuideDbContext dbContext, IMediator mediator) : I
 
     public async Task<AttractionDto?> Get(int id)
     {
-        var request = new GetAttractionQuery { Id = id };
+        var request = new GetAttractionQuery { Id = id, LanguageCode = _language };
         return await mediator.Send(request);
     }
 
@@ -46,13 +45,14 @@ public class AttractionService(GuideDbContext dbContext, IMediator mediator) : I
     {
         var query = new GetAttractionsQuery
         {
-            Page = page, Limit = limit, OrderBy = orderBy, Search = search
+            Page = page, Limit = limit, OrderBy = orderBy, Search = search, LanguageCode = _language
         };
         return (await mediator.Send(query)).ToList();
     }
 
     public async Task<AttractionDto?> Update(UpdateAttractionCommand request)
     {
+        request.LanguageCode ??= _language;
         return await mediator.Send(request);
     }
 

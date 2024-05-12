@@ -7,24 +7,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Guide.Application.Features.Categories.Queries.GetCategories;
 
-public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, ICollection<CategoryDto>>
+public class GetCategoriesQueryHandler(GuideDbContext dbContext)
+    : IRequestHandler<GetCategoriesQuery, ICollection<CategoryDto>>
 {
-    private readonly GuideDbContext _dbContext;
-
-    public GetCategoriesQueryHandler(GuideDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public async Task<ICollection<CategoryDto>> Handle(GetCategoriesQuery request, CancellationToken cancellationToken)
     {
         var lang = request.LanguageCode ?? LanguageCodes.Default;
 
-        var query = _dbContext.Categories
-            .Include(x => x.Translations.Where(x => x.LanguageCode == lang))
+        var query = dbContext.Categories
             .Select(x => new CategoryDto
             {
-                Id = x.Id, Name = x.Translations.Single().Name
+                Id = x.Id, Name = x.Translations.First(x => x.LanguageCode == lang).Name
             })
             .AsNoTracking();
 

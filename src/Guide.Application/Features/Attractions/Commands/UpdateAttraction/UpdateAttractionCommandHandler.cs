@@ -23,14 +23,14 @@ public class UpdateAttractionCommandHandler : IRequestHandler<UpdateAttractionCo
         var lang = request.LanguageCode ?? LanguageCodes.Default;
         
         var attraction = await _dbContext.Attractions
-            .Include(x => x.Translations.Where(x => x.LanguageCode == lang))
+            .Include(x => x.Translations)
             .Include(x => x.Categories)
             .ThenInclude(x => x.Translations.Where(x => x.LanguageCode == lang))
             .SingleOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
         if (attraction == null)
         {
-            return null!;
+            return null;
         }
 
         var categories = await _dbContext.Categories
@@ -38,8 +38,8 @@ public class UpdateAttractionCommandHandler : IRequestHandler<UpdateAttractionCo
             .Where(x => request.Categories.Contains(x.Id))
             .ToListAsync(cancellationToken);
 
-        attraction.Translations.First().Name = request.Name;
-        attraction.Translations.First().Description = request.Description;
+        attraction.Translations.First(x => x.LanguageCode == lang).Name = request.Name;
+        attraction.Translations.First(x => x.LanguageCode == lang).Description = request.Description;
         attraction.Categories = categories;
         await _dbContext.SaveChangesAsync(cancellationToken);
 
