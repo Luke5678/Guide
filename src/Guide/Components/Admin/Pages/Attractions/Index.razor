@@ -49,11 +49,11 @@ else
                         <th @onclick="@(async () => await ChangeOrder("id"))">
                             Id
                         </th>
-                        <th @onclick="@(async () => await ChangeOrder("category"))">
-                            Kategoria
-                        </th>
                         <th @onclick="@(async () => await ChangeOrder("name"))">
                             Nazwa
+                        </th>
+                        <th @onclick="@(async () => await ChangeOrder("category"))">
+                            Kategorie
                         </th>
                         <th/>
                     </tr>
@@ -63,8 +63,8 @@ else
                     {
                         <tr>
                             <td>@attraction.Id</td>
-                            <td>@(string.Join(", ", attraction.Categories.Select(x => x.Name)))</td>
                             <td>@attraction.Name</td>
+                            <td>@(string.Join(", ", attraction.Categories.Select(x => x.Name)))</td>
                             <td>
                                 <div class="d-flex gap-2">
                                     <button class="btn btn-primary" @onclick="() => Edit(attraction)">

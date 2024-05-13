@@ -4,6 +4,7 @@
 @rendermode InteractiveServer
 
 @inject IAttractionService AttractionService
+@inject ICategoryService CategoryService
 @inject NavigationManager NavigationManager
 
 <PageTitle>Atrakcje - Panel Administratora</PageTitle>
@@ -23,11 +24,15 @@
             <InputText class="form-control" @bind-Value="_request.Name">@_request.Name</InputText>
             <ValidationMessage For="() => _request.Name"/>
         </div>
-        @* <div class="mb-3"> *@
-        @*     <label class="form-label">Kategoria</label> *@
-        @*     <InputText class="form-control" @bind-Value="_attraction.Category">@_attraction.Category</InputText> *@
-        @*     <ValidationMessage For="() => _attraction.Category"/> *@
-        @* </div> *@
+        <div class="mb-3">
+            <label class="form-label">Kategorie</label>
+            <select class="form-select" multiple @onchange="SelectedCategoriesChanged">
+                @foreach (var cat in _categories)
+                {
+                    <option value="@cat.Id" selected=@_request.Categories.Contains(cat.Id)>@cat.Name</option>
+                }
+            </select>
+        </div>
         <div class="mb-3">
             <label class="form-label">Opis</label>
             <InputTextArea class="form-control" @bind-Value="_request.Description" rows="4">@_request.Description</InputTextArea>
@@ -41,6 +46,7 @@
     [Parameter] public int? Id { get; set; }
 
     UpdateAttractionCommand? _request;
+    List<CategoryDto> _categories = [];
 
     protected override async Task OnInitializedAsync()
     {
@@ -57,6 +63,8 @@
             return;
         }
 
+        _categories = await CategoryService.GetAll();
+
         _request = new UpdateAttractionCommand
         {
             Id = attraction.Id,
@@ -69,6 +77,14 @@
     {
         await AttractionService.Update(_request!);
         NavigationManager.NavigateTo("/admin/attractions");
+    }
+
+    void SelectedCategoriesChanged(ChangeEventArgs e)
+    {
+        if (e.Value is not null)
+        {
+            _request!.Categories = ((string[])e.Value).Select(int.Parse).ToList();
+        }
     }
 
 }
