@@ -8,24 +8,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Guide.Application.Features.Attractions.Commands.CreateAttraction;
 
-public class CreateAttractionCommandHandler : IRequestHandler<CreateAttractionCommand, AttractionDto?>
+public class CreateAttractionCommandHandler(GuideDbContext dbContext, IMapper mapper)
+    : IRequestHandler<CreateAttractionCommand, AttractionDto?>
 {
-    private readonly GuideDbContext _dbContext;
-    private readonly IMapper _mapper;
-
-    public CreateAttractionCommandHandler(GuideDbContext dbContext, IMapper mapper)
-    {
-        _dbContext = dbContext;
-        _mapper = mapper;
-    }
-
     public async Task<AttractionDto?> Handle(CreateAttractionCommand request, CancellationToken cancellationToken)
     {
-        var lang = LanguageCodes.Default;
-        
-        var categories = await _dbContext.Categories
-            .Include(x => x.Translations.Where(x => x.LanguageCode == lang))
-            .AsNoTracking()
+        var categories = await dbContext.Categories
+            .Include(x => x.Translations)
+            .Where(x => request.Categories.Contains(x.Id))
             .ToListAsync(cancellationToken: cancellationToken);
 
         var attraction = new Attraction
@@ -39,9 +29,9 @@ public class CreateAttractionCommandHandler : IRequestHandler<CreateAttractionCo
             }).ToArray()
         };
 
-        await _dbContext.Attractions.AddAsync(attraction, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.Attractions.AddAsync(attraction, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
 
-        return _mapper.Map<AttractionDto>(attraction);
+        return mapper.Map<AttractionDto>(attraction);
     }
 }

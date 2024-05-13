@@ -4,37 +4,56 @@
 @rendermode InteractiveServer
 
 @inject IAttractionService AttractionService
+@inject ICategoryService CategoryService
 @inject NavigationManager NavigationManager
 
 <PageTitle>Atrakcje - Panel Administratora</PageTitle>
 
-<EditForm Model="_attraction" OnValidSubmit="HandleSubmit" class="mt-4">
+<EditForm Model="_request" OnValidSubmit="HandleSubmit" class="mt-4">
     <FluentValidationValidator/>
     <div class="mb-3">
         <label class="form-label">Nazwa</label>
-        <InputText class="form-control" @bind-Value="_attraction.Name">@_attraction.Name</InputText>
-        <ValidationMessage For="() => _attraction.Name"/>
+        <InputText class="form-control" @bind-Value="_request.Name">@_request.Name</InputText>
+        <ValidationMessage For="() => _request.Name"/>
     </div>
-    @* <div class="mb-3"> *@
-    @*     <label class="form-label">Kategoria</label> *@
-    @*     <InputText class="form-control" @bind-Value="_attraction.Category">@_attraction.Category</InputText> *@
-    @*     <ValidationMessage For="() => _attraction.Category"/> *@
-    @* </div> *@
+    <div class="mb-3">
+        <label class="form-label">Kategorie</label>
+        <select class="form-select" multiple @onchange="SelectedCategoriesChanged">
+            @foreach (var cat in _categories)
+            {
+                <option value="@cat.Id" selected=@_request.Categories.Contains(cat.Id)>@cat.Name</option>
+            }
+        </select>
+    </div>
     <div class="mb-3">
         <label class="form-label">Opis</label>
-        <InputTextArea class="form-control" @bind-Value="_attraction.Description" rows="4">@_attraction.Description</InputTextArea>
-        <ValidationMessage For="() => _attraction.Description"/>
+        <InputTextArea class="form-control" @bind-Value="_request.Description" rows="4">@_request.Description</InputTextArea>
+        <ValidationMessage For="() => _request.Description"/>
     </div>
     <button type="submit" class="btn btn-primary">Zapisz</button>
 </EditForm>
 
 @code {
-    readonly CreateAttractionCommand _attraction = new();
+    readonly CreateAttractionCommand _request = new();
+    List<CategoryDto> _categories = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        _categories = await CategoryService.GetAll();
+    }
 
     async Task HandleSubmit()
     {
-        await AttractionService.Create(_attraction);
+        await AttractionService.Create(_request);
         NavigationManager.NavigateTo("/admin/attractions");
+    }
+
+    void SelectedCategoriesChanged(ChangeEventArgs e)
+    {
+        if (e.Value is not null)
+        {
+            _request.Categories = ((string[])e.Value).Select(int.Parse).ToList();
+        }
     }
 
 }

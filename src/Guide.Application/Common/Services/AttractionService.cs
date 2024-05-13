@@ -25,7 +25,7 @@ public class AttractionService(GuideDbContext dbContext, IMediator mediator) : I
                 .RuleFor(u => u.Name, (f, u) => f.Commerce.ProductName())
                 .RuleFor(u => u.Description, f => f.Lorem.Sentence());
 
-            foreach (var fake in faker.Generate(500))
+            foreach (var fake in faker.Generate(500 - dbContext.Attractions.Count()))
             {
                 await mediator.Send(fake);
             }
