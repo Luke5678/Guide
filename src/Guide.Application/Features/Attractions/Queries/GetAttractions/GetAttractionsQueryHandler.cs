@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Guide.Infrastructure;
+﻿using Guide.Infrastructure;
 using Guide.Shared.Common.Dtos;
 using Guide.Shared.Common.Static;
 using MediatR;

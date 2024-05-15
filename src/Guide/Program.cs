@@ -8,11 +8,12 @@ using Guide.Components;
 using Guide.Domain.Entities;
 using Guide.Infrastructure;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.FileProviders;
 using Serilog;
 using Serilog.Events;
 
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Override("Microsoft", LogEventLevel.Debug)
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
     .Enrich.FromLogContext()
     .WriteTo.Console()
     .CreateBootstrapLogger();
@@ -21,13 +22,13 @@ try
 {
     var builder = WebApplication.CreateBuilder(args);
 
-    builder.Host.UseSerilog((context, services, configuration) => configuration
-        .ReadFrom.Configuration(context.Configuration)
+    // Add services to the container.
+    builder.Services.AddSerilog((services, lc) => lc
+        .ReadFrom.Configuration(builder.Configuration)
         .ReadFrom.Services(services)
         .Enrich.FromLogContext()
         .WriteTo.Console());
 
-    // Add services to the container.
     builder.Services.AddRazorComponents()
         .AddInteractiveServerComponents()
         .AddInteractiveWebAssemblyComponents();
@@ -68,10 +69,20 @@ try
 
     builder.AddBlazorCookies();
     builder.Services.AddScoped<CultureCookieService>();
-    
+
     builder.Services.AddApplication(builder.Configuration);
 
     var app = builder.Build();
+
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
+    // var staticFilesPath = $@"{AppDomain.CurrentDomain.BaseDirectory}/wwwroot";
+    // Directory.CreateDirectory(staticFilesPath);
+    // app.UseStaticFiles(new StaticFileOptions
+    // {
+    //     FileProvider = new PhysicalFileProvider($@"{AppDomain.CurrentDomain.BaseDirectory}/wwwroot")
+    // });
+
 
     app.UseSerilogRequestLogging();
 
@@ -90,7 +101,6 @@ try
 
     app.UseHttpsRedirection();
 
-    app.UseStaticFiles();
     app.UseAntiforgery();
 
     app.MapRazorComponents<App>()

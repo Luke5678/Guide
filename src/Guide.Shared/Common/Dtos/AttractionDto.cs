@@ -10,6 +10,7 @@ public class AttractionDto : IMapFrom<Attraction>
     public string Name { get; set; } = null!;
     public string Description { get; set; } = null!;
     public IEnumerable<CategoryDto> Categories { get; set; } = [];
+    public IEnumerable<AttractionImage> Images { get; set; } = [];
 
     public void Mapping(Profile profile)
     {

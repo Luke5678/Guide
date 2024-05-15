@@ -14,6 +14,7 @@ public class GuideDbContext(
     : IdentityDbContext<User>(options)
 {
     public DbSet<Attraction> Attractions { get; set; }
+    public DbSet<AttractionImage> AttractionImages { get; set; }
     public DbSet<AttractionTranslation> AttractionTranslations { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<CategoryTranslation> CategoryTranslations { get; set; }

@@ -17,7 +17,7 @@
             <LanguageSwitcher/>
         </div>
     </div>
-    <EditForm Model="_request" OnValidSubmit="HandleSubmit">
+    <EditForm class="mb-5" Model="_request" OnValidSubmit="HandleSubmit">
         <FluentValidationValidator/>
         <div class="mb-3">
             <label class="form-label">Nazwa</label>
@@ -26,7 +26,7 @@
         </div>
         <div class="mb-3">
             <label class="form-label">Kategorie</label>
-            <select class="form-select" multiple @onchange="SelectedCategoriesChanged">
+            <select class="form-select" multiple @onchange="OnSelectedCategoriesChanged">
                 @foreach (var cat in _categories)
                 {
                     <option value="@cat.Id" selected=@_request.Categories.Contains(cat.Id)>@cat.Name</option>
@@ -40,13 +40,60 @@
         </div>
         <button type="submit" class="btn btn-primary">Zapisz</button>
     </EditForm>
+
+    <div class="row">
+        <div class="col mb-3">
+            <label class="form-label">Zdjęcia</label>
+            <InputFile class="form-control" OnChange="OnInputFileChange" multiple/>
+        </div>
+    </div>
+
+    <div class="row row-gap-3">
+        @if (_isProcessingFiles)
+        {
+            <p>Przesyłanie zdjęć...</p>
+        }
+        else
+        {
+            @foreach (var image in _images)
+            {
+                <div class="col-sm-6 col-lg-4">
+                    <div class="card">
+                        <div class="row g-0">
+                            <div class="col-md-6">
+                                <img src="@image.Url" class="img-fluid rounded-start" alt="...">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card-body">
+                                    <div class="form-check mb-3">
+                                        <InputCheckbox class="form-check-input" type="checkbox" id="@($"image-{image.Id}")" name="@($"image-{image.Id}")"
+                                                       @bind-Value="image.IsMain" @bind-Value:after="@(async () => await OnMainImageChange(image))"/>
+                                        <label class="form-check-label" for="image-@image.Id">
+                                            Zdjęcie główne
+                                        </label>
+                                    </div>
+                                    <button type="button" class="btn btn-danger" @onclick="@(async () => await DeleteImage(image))">
+                                        Usuń
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
 }
 
 @code {
     [Parameter] public int? Id { get; set; }
 
-    UpdateAttractionCommand? _request;
-    List<CategoryDto> _categories = [];
+    private const int MaxAllowedFiles = 50;
+
+    private UpdateAttractionCommand? _request;
+    private List<CategoryDto> _categories = [];
+    private List<AttractionImage> _images = [];
+    private bool _isProcessingFiles;
 
     protected override async Task OnInitializedAsync()
     {
@@ -64,6 +111,7 @@
         }
 
         _categories = await CategoryService.GetAll();
+        _images = attraction.Images.ToList();
 
         _request = new UpdateAttractionCommand
         {
@@ -73,18 +121,50 @@
         };
     }
 
-    async Task HandleSubmit()
+    private async Task HandleSubmit()
     {
         await AttractionService.Update(_request!);
         NavigationManager.NavigateTo("/admin/attractions");
     }
 
-    void SelectedCategoriesChanged(ChangeEventArgs e)
+    private void OnSelectedCategoriesChanged(ChangeEventArgs e)
     {
         if (e.Value is not null)
         {
             _request!.Categories = ((string[])e.Value).Select(int.Parse).ToList();
         }
+    }
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        _isProcessingFiles = true;
+
+        var files = e.GetMultipleFiles(MaxAllowedFiles);
+        var images = await AttractionService.AddImages(files, _request!.Id);
+
+        _images = images;
+        _isProcessingFiles = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task DeleteImage(AttractionImage image)
+    {
+        await AttractionService.DeleteImage(image);
+        _images.Remove(image);
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task OnMainImageChange(AttractionImage targetImage)
+    {
+        await AttractionService.SetImageAsMain(targetImage);
+
+        foreach (var image in _images)
+        {
+            image.IsMain = image.Id == targetImage.Id;
+        }
+
+        await InvokeAsync(StateHasChanged);
     }
 
 }

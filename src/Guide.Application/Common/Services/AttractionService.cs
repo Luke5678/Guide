@@ -2,18 +2,24 @@
 using Bogus;
 using MediatR;
 using Guide.Application.Common.Interfaces;
+using Guide.Application.Features.AttractionImages.Commands.AddAttractionImages;
+using Guide.Application.Features.AttractionImages.Commands.DeleteAttractionImage;
+using Guide.Application.Features.AttractionImages.Commands.SetMainAttractionImage;
 using Guide.Application.Features.Attractions.Commands.CreateAttraction;
 using Guide.Application.Features.Attractions.Commands.DeleteAttraction;
 using Guide.Application.Features.Attractions.Commands.UpdateAttraction;
 using Guide.Application.Features.Attractions.Queries.CountAttractions;
 using Guide.Application.Features.Attractions.Queries.GetAttraction;
 using Guide.Application.Features.Attractions.Queries.GetAttractions;
+using Guide.Domain.Entities;
 using Guide.Infrastructure;
 using Guide.Shared.Common.Dtos;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace Guide.Application.Common.Services;
 
-public class AttractionService(GuideDbContext dbContext, IMediator mediator) : IAttractionService
+public class AttractionService(GuideDbContext dbContext, IMediator mediator)
+    : IAttractionService
 {
     private readonly string _language = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
 
@@ -58,13 +64,29 @@ public class AttractionService(GuideDbContext dbContext, IMediator mediator) : I
 
     public async Task<bool> Delete(int id)
     {
-        var request = new DeleteAttractionCommand { Id = id };
-        return await mediator.Send(request);
+        return await mediator.Send(new DeleteAttractionCommand { Id = id });
     }
 
     public async Task<int> GetCount(string? search = null)
     {
-        var request = new CountAttractionsQuery { Search = search };
-        return await mediator.Send(request);
+        return await mediator.Send(new CountAttractionsQuery { Search = search });
+    }
+
+    public async Task<List<AttractionImage>> AddImages(IReadOnlyList<IBrowserFile> files, int attractionId = 0)
+    {
+        return await mediator.Send(new AddAttractionImagesCommand
+        {
+            Files = files, AttractionId = attractionId
+        });
+    }
+
+    public async Task DeleteImage(AttractionImage image)
+    {
+        await mediator.Send(new DeleteAttractionImageCommand { Image = image });
+    }
+
+    public async Task SetImageAsMain(AttractionImage image)
+    {
+        await mediator.Send(new SetMainAttractionImageCommand { Image = image });
     }
 }

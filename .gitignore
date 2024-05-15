@@ -6,3 +6,4 @@ riderModule.iml
 /.vs
 /.idea
 sqlite.db*
+src/Guide/wwwroot/uploads

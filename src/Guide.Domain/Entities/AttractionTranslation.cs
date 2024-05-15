@@ -1,6 +1,4 @@
-﻿using Guide.Domain.Common;
-
-namespace Guide.Domain.Entities;
+﻿namespace Guide.Domain.Entities;
 
 public class AttractionTranslation
 {
