@@ -1,0 +1,74 @@
+﻿@page "/"
+@rendermode InteractiveWebAssembly
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter @_handler</h1>
+
+<p role="status">Current count: @_currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+<section class="mb-5">
+    <h2>Popularne</h2>
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <img src="path/to/image1.jpg" class="card-img-top" alt="Atrakcja Popularna 1">
+                <div class="card-body">
+                    <h5 class="card-title">Atrakcja Popularna 1</h5>
+                    <p class="card-text">Krótki opis atrakcji.</p>
+                    <a href="#" class="btn btn-primary">Czytaj więcej</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <img src="path/to/image2.jpg" class="card-img-top" alt="Atrakcja Popularna 2">
+                <div class="card-body">
+                    <h5 class="card-title">Atrakcja Popularna 2</h5>
+                    <p class="card-text">Krótki opis atrakcji.</p>
+                    <a href="#" class="btn btn-primary">Czytaj więcej</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <img src="path/to/image3.jpg" class="card-img-top" alt="Atrakcja Popularna 3">
+                <div class="card-body">
+                    <h5 class="card-title">Atrakcja Popularna 3</h5>
+                    <p class="card-text">Krótki opis atrakcji.</p>
+                    <a href="#" class="btn btn-primary">Czytaj więcej</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <img src="path/to/image4.jpg" class="card-img-top" alt="Atrakcja Popularna 4">
+                <div class="card-body">
+                    <h5 class="card-title">Atrakcja Popularna 4</h5>
+                    <p class="card-text">Krótki opis atrakcji.</p>
+                    <a href="#" class="btn btn-primary">Czytaj więcej</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    private int _currentCount;
+    private string _handler = "";
+
+    protected override void OnInitialized()
+    {
+        _handler = OperatingSystem.IsBrowser() ? "WASM" : "Server";
+    }
+
+    private void IncrementCount()
+    {
+        _currentCount++;
+        _handler = OperatingSystem.IsBrowser() ? "WASM" : "Server";
+        StateHasChanged();
+    }
+
+}

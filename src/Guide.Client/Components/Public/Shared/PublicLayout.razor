@@ -1,0 +1,67 @@
+﻿@inherits LayoutComponentBase
+
+<HeadContent>
+    <link rel="stylesheet" href="css/app.css"/>
+</HeadContent>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="#">Przewodnik Opolskie</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Zabytki</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Muzea</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Przyroda</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Rozrywka</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Architektura</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Religia</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Dla dzieci</a>
+                </li>
+            </ul>
+            <div class="ms-auto">
+                <LanguageSwitcher/>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<header class="bg-primary text-white text-center py-5">
+    <div class="container">
+        <h1>Interaktywny Przewodnik po Województwie Opolskim</h1>
+        <p class="lead">Odkryj najciekawsze miejsca i atrakcje w regionie!</p>
+    </div>
+</header>
+
+<main class="container my-5 content">
+    @Body
+</main>
+
+<AdminTools/>
+
+<footer class="bg-light py-4">
+    <div class="container text-center">
+        <p class="mb-0">© 2024 Interaktywny Przewodnik po Województwie Opolskim</p>
+    </div>
+</footer>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>

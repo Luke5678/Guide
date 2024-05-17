@@ -1,8 +1,8 @@
 ﻿<Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="new[] { typeof(Client.Components._Imports).Assembly }">
     <Found Context="routeData">
-        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Public.Shared.PublicLayout)">
+        <AuthorizeRouteView RouteData="routeData">
             <NotAuthorized>
-                <RedirectToLogin/>
+                <Guide.Client.Components.Authorization.RedirectToLogin/>
             </NotAuthorized>
         </AuthorizeRouteView>
         <FocusOnNavigate RouteData="routeData" Selector="h1"/>

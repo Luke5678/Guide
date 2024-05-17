@@ -1,0 +1,23 @@
+﻿@using System.Globalization
+@using Guide.Shared.Common.Static
+
+@rendermode InteractiveWebAssembly
+
+@inject NavigationManager NavigationManager
+@inject CultureCookieService CultureCookieService
+
+<select class="form-select" @onchange="ChangeLanguage">
+    <option value="pl" selected="@("pl" == _language)">Polski</option>
+    <option value="en" selected="@("en" == _language)">Angielski</option>
+</select>
+
+@code {
+    private readonly string _language = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+
+    private async Task ChangeLanguage(ChangeEventArgs e)
+    {
+        await CultureCookieService.SetCulture(e.Value?.ToString() ?? LanguageCodes.Default);
+        NavigationManager.Refresh(true);
+    }
+
+}
