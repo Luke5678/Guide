@@ -1,4 +1,6 @@
-﻿@using Guide.Application.Features.Attractions.Commands.CreateAttraction
+﻿@using TinyMCE.Blazor
+@using Guide.Common.Static
+@using Guide.Application.Features.Attractions.Commands.CreateAttraction
 
 @page "/admin/attractions/create"
 @rendermode InteractiveServer
@@ -27,8 +29,11 @@
     </div>
     <div class="mb-3">
         <label class="form-label">Opis</label>
-        <InputTextArea class="form-control" @bind-Value="_request.Description" rows="4">@_request.Description</InputTextArea>
         <ValidationMessage For="() => _request.Description"/>
+        <Editor Field="() => _request.Description"
+                @bind-Value="_request.Description"
+                ScriptSrc="/js/tinymce/tinymce.min.js"
+                Conf="TinyMceConfig.Config"/>
     </div>
     <button type="submit" class="btn btn-primary">Zapisz</button>
 </EditForm>
