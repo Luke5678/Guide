@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using System.Security.Claims;
-using Guide.Client;
+using Guide.Client.Common.Authorization;
 using Guide.Domain.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;

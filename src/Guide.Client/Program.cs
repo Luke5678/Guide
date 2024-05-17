@@ -1,5 +1,5 @@
 using BitzArt.Blazor.Cookies;
-using Guide.Client;
+using Guide.Client.Common.Authorization;
 using Guide.Client.Common.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;

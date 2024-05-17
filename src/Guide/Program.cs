@@ -107,7 +107,7 @@ try
     app.MapRazorComponents<App>()
         .AddInteractiveServerRenderMode()
         .AddInteractiveWebAssemblyRenderMode()
-        .AddAdditionalAssemblies(typeof(Guide.Client._Imports).Assembly);
+        .AddAdditionalAssemblies(typeof(Guide.Client.Components._Imports).Assembly);
 
     app.MapControllers();
 

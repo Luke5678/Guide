@@ -28,4 +28,12 @@
 	  <ProjectReference Include="..\Guide.Shared\Guide.Shared.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <_ContentIncludedByDefault Remove="Account\RedirectToLogin.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <AdditionalFiles Include="Components\Authorization\RedirectToLogin.razor" />
+	</ItemGroup>
+
 </Project>

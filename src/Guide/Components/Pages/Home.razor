@@ -1,7 +1,40 @@
 ﻿@page "/"
+@using Guide.Domain.Entities
+@using Guide.Infrastructure
+@using Microsoft.EntityFrameworkCore
+
+@inject GuideDbContext DbContext
 
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
 <p>Lang: @CultureInfo.CurrentCulture.TwoLetterISOLanguageName</p>
+
+@if (_attraction != null)
+{
+    <p>@_attraction.Id</p>
+    <p>
+        @_attraction.Translations.First(x => x.LanguageCode == Locale).Name
+    </p>
+    <p>
+        @((MarkupString)_attraction.Translations.First(x => x.LanguageCode == Locale).Description)
+    </p>
+}
+
+
+@code {
+
+    private string Locale => CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+    private Attraction? _attraction;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _attraction = await DbContext.Attractions
+            .Include(x => x.Images)
+            .Include(x => x.Translations)
+            .AsNoTracking()
+            .FirstAsync(x => x.Id == 5);
+    }
+
+}
