@@ -41,7 +41,7 @@ public class AddAttractionImagesCommandHandler(GuideDbContext dbContext, IWebHos
             }
             catch (Exception ex)
             {
-                Log.Information($"File: {file.Name} Error: {ex.Message}");
+                Log.Information($"AttractionImage: {file.Name} Error: {ex.Message}");
             }
         }
 

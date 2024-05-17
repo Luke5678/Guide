@@ -15,6 +15,7 @@ public static class TinyMceConfig
         },
         { "quickbars_selection_toolbar", "bold italic | quicklink h2 h3 blockquote quickimage quicktable" },
         { "toolbar_mode", "sliding" },
-        { "contextmenu", "link image table" },
+
+        { "images_upload_url", "/api/upload" }
     };
 }

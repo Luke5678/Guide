@@ -71,6 +71,7 @@ try
     builder.Services.AddScoped<CultureCookieService>();
 
     builder.Services.AddApplication(builder.Configuration);
+    builder.Services.AddControllers();
 
     var app = builder.Build();
 
@@ -107,6 +108,8 @@ try
         .AddInteractiveServerRenderMode()
         .AddInteractiveWebAssemblyRenderMode()
         .AddAdditionalAssemblies(typeof(Guide.Client._Imports).Assembly);
+
+    app.MapControllers();
 
     // Add additional endpoints required by the Identity /Account Razor components.
     app.MapAdditionalIdentityEndpoints();
