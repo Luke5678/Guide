@@ -1,11 +1,12 @@
 ﻿@page "/admin"
+@rendermode InteractiveServer
 
 @inject NavigationManager NavigationManager
 
 
 @code {
 
-    protected override void OnInitialized()
+    protected override void OnAfterRender(bool firstRender)
     {
         NavigationManager.NavigateTo("/admin/attractions");
     }

@@ -1,12 +1,16 @@
-﻿@using TinyMCE.Blazor
-@using Guide.Common.Static
-@using Guide.Application.Features.Attractions.Commands.UpdateAttraction
-
-@page "/admin/attractions/update/{id:int}"
+﻿@page "/admin/attractions/update/{id:int}"
 @rendermode InteractiveServer
 
-@inject IAttractionService AttractionService
-@inject ICategoryService CategoryService
+@using Guide.Application.Features.AttractionImages.Commands.AddAttractionImages
+@using Guide.Application.Features.AttractionImages.Commands.DeleteAttractionImage
+@using Guide.Application.Features.AttractionImages.Commands.SetMainAttractionImage
+@using TinyMCE.Blazor
+@using Guide.Common.Static
+@using Guide.Application.Features.Attractions.Commands.UpdateAttraction
+@using Guide.Application.Features.Attractions.Queries.GetAttraction
+@using Guide.Application.Features.Categories.Queries.GetCategories
+
+@inject IMediator Mediator
 @inject NavigationManager NavigationManager
 
 <PageTitle>Atrakcje - Panel Administratora</PageTitle>
@@ -93,6 +97,7 @@
     [Parameter] public int? Id { get; set; }
 
     private const int MaxAllowedFiles = 50;
+    private readonly string _language = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
 
     private UpdateAttractionCommand? _request;
     private List<CategoryDto> _categories = [];
@@ -107,27 +112,28 @@
             return;
         }
 
-        var attraction = await AttractionService.Get(Id.Value);
+        var attraction = await Mediator.Send(new GetAttractionQuery { Id = Id.Value, LanguageCode = _language });
         if (attraction == null)
         {
             NavigationManager.NavigateTo("/admin/attractions");
             return;
         }
 
-        _categories = await CategoryService.GetAll();
+        _categories = await Mediator.Send(new GetCategoriesQuery { LanguageCode = _language });
         _images = attraction.Images.ToList();
 
         _request = new UpdateAttractionCommand
         {
             Id = attraction.Id,
             Name = attraction.Name, Description = attraction.Description,
-            Categories = attraction.Categories.Select(x => x.Id)
+            Categories = attraction.Categories.Select(x => x.Id),
+            LanguageCode = _language
         };
     }
 
     private async Task HandleSubmit()
     {
-        await AttractionService.Update(_request!);
+        await Mediator.Send(_request!);
         NavigationManager.NavigateTo("/admin/attractions");
     }
 
@@ -143,8 +149,11 @@
     {
         _isProcessingFiles = true;
 
-        var files = e.GetMultipleFiles(MaxAllowedFiles);
-        var images = await AttractionService.AddImages(files, _request!.Id);
+        var images = await Mediator.Send(new AddAttractionImagesCommand
+        {
+            Files = e.GetMultipleFiles(MaxAllowedFiles),
+            AttractionId = _request!.Id
+        });
 
         _images = images;
         _isProcessingFiles = false;
@@ -153,7 +162,7 @@
 
     private async Task DeleteImage(AttractionImage image)
     {
-        await AttractionService.DeleteImage(image);
+        await Mediator.Send(new DeleteAttractionImageCommand { Image = image });
         _images.Remove(image);
 
         await InvokeAsync(StateHasChanged);
@@ -161,7 +170,7 @@
 
     private async Task OnMainImageChange(AttractionImage targetImage)
     {
-        await AttractionService.SetImageAsMain(targetImage);
+        await Mediator.Send(new SetMainAttractionImageCommand { Image = targetImage });
 
         foreach (var image in _images)
         {

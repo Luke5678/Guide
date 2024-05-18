@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 namespace Guide.Application.Features.Attractions.Queries.GetAttractions;
 
 public class GetAttractionsQueryHandler(GuideDbContext dbContext)
-    : IRequestHandler<GetAttractionsQuery, ICollection<AttractionDto>>
+    : IRequestHandler<GetAttractionsQuery, List<AttractionDto>>
 {
-    public async Task<ICollection<AttractionDto>> Handle(
+    public async Task<List<AttractionDto>> Handle(
         GetAttractionsQuery request,
         CancellationToken cancellationToken)
     {

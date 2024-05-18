@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Guide.Application.Features.Attractions.Queries.GetAttractions;
 
-public class GetAttractionsQuery : IRequest<ICollection<AttractionDto>>
+public class GetAttractionsQuery : IRequest<List<AttractionDto>>
 {
     public string? LanguageCode { get; set; }
     public int Page { get; set; }

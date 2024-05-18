@@ -1,8 +1,6 @@
 ﻿using System.Reflection;
 using FluentValidation;
 using Guide.Application.Common.Behaviors;
-using Guide.Application.Common.Interfaces;
-using Guide.Application.Common.Services;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,9 +16,6 @@ public static class DependencyInjection
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-        
-        services.AddScoped<IAttractionService, AttractionService>();
-        services.AddScoped<ICategoryService, CategoryService>();
 
         return services;
     }

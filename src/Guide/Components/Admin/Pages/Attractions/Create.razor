@@ -1,12 +1,14 @@
-﻿@using TinyMCE.Blazor
-@using Guide.Common.Static
-@using Guide.Application.Features.Attractions.Commands.CreateAttraction
-
-@page "/admin/attractions/create"
+﻿@page "/admin/attractions/create"
 @rendermode InteractiveServer
 
-@inject IAttractionService AttractionService
-@inject ICategoryService CategoryService
+@using Guide.Application.Features.AttractionImages.Commands.AddAttractionImages
+@using Guide.Application.Features.AttractionImages.Commands.DeleteAttractionImage
+@using Guide.Application.Features.Attractions.Commands.CreateAttraction
+@using Guide.Application.Features.Categories.Queries.GetCategories
+@using Guide.Common.Static
+@using TinyMCE.Blazor
+
+@inject IMediator Mediator
 @inject NavigationManager NavigationManager
 
 <PageTitle>Atrakcje - Panel Administratora</PageTitle>
@@ -85,17 +87,21 @@
     private const int MaxAllowedFiles = 50;
 
     private readonly CreateAttractionCommand _request = new();
+    private readonly string _language = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
     private List<CategoryDto> _categories = [];
     private bool _isProcessingFiles;
 
     protected override async Task OnInitializedAsync()
     {
-        _categories = await CategoryService.GetAll();
+        _categories = await Mediator.Send(new GetCategoriesQuery
+        {
+            LanguageCode = _language
+        });
     }
 
     private async Task HandleSubmit()
     {
-        await AttractionService.Create(_request);
+        await Mediator.Send(_request);
         NavigationManager.NavigateTo("/admin/attractions");
     }
 
@@ -111,8 +117,10 @@
     {
         _isProcessingFiles = true;
 
-        var files = e.GetMultipleFiles(MaxAllowedFiles);
-        var images = await AttractionService.AddImages(files);
+        var images = await Mediator.Send(new AddAttractionImagesCommand
+        {
+            Files = e.GetMultipleFiles(MaxAllowedFiles)
+        });
 
         _request.Images.AddRange(images);
         _isProcessingFiles = false;
@@ -121,7 +129,7 @@
 
     private async Task DeleteImage(AttractionImage image)
     {
-        await AttractionService.DeleteImage(image);
+        await Mediator.Send(new DeleteAttractionImageCommand { Image = image });
         _request.Images.Remove(image);
 
         await InvokeAsync(StateHasChanged);

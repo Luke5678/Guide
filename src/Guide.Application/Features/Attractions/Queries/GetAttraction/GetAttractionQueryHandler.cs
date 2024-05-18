@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore;
 namespace Guide.Application.Features.Attractions.Queries.GetAttraction;
 
 public class GetAttractionQueryHandler(GuideDbContext dbContext, IMapper mapper)
-    : IRequestHandler<GetAttractionQuery, AttractionDto>
+    : IRequestHandler<GetAttractionQuery, AttractionDto?>
 {
-    public async Task<AttractionDto> Handle(GetAttractionQuery request, CancellationToken cancellationToken)
+    public async Task<AttractionDto?> Handle(GetAttractionQuery request, CancellationToken cancellationToken)
     {
         var lang = request.LanguageCode ?? LanguageCodes.Default;
 

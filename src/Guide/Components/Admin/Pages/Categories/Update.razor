@@ -2,8 +2,9 @@
 @rendermode InteractiveServer
 
 @using Guide.Application.Features.Categories.Commands.UpdateCategory
+@using Guide.Application.Features.Categories.Queries.GetCategory
 
-@inject ICategoryService CategoryService
+@inject IMediator Mediator
 @inject NavigationManager NavigationManager
 
 <PageTitle>Kategorie - Panel Administratora</PageTitle>
@@ -31,6 +32,7 @@
     [Parameter] public int? Id { get; set; }
 
     UpdateCategoryCommand? _request;
+    private readonly string _language = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
 
     protected override async Task OnInitializedAsync()
     {
@@ -40,7 +42,7 @@
             return;
         }
 
-        var category = await CategoryService.Get(Id.Value);
+        var category = await Mediator.Send(new GetCategoryQuery { Id = Id.Value, LanguageCode = _language });
         if (category == null)
         {
             NavigationManager.NavigateTo("/admin/categories");
@@ -50,13 +52,14 @@
         _request = new UpdateCategoryCommand
         {
             Id = category.Id,
-            Name = category.Name
+            Name = category.Name,
+            LanguageCode = _language
         };
     }
 
     async Task HandleSubmit()
     {
-        await CategoryService.Update(_request!);
+        await Mediator.Send(_request!);
         NavigationManager.NavigateTo("/admin/categories");
     }
 

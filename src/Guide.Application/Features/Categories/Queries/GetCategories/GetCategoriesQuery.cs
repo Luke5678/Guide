@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Guide.Application.Features.Categories.Queries.GetCategories;
 
-public class GetCategoriesQuery : IRequest<ICollection<CategoryDto>>
+public class GetCategoriesQuery : IRequest<List<CategoryDto>>
 {
     public string? LanguageCode { get; set; }
     public int Page { get; set; }

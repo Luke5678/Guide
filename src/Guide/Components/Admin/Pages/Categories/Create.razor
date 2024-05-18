@@ -3,7 +3,7 @@
 
 @using Guide.Application.Features.Categories.Commands.CreateCategory
 
-@inject ICategoryService CategoryService
+@inject IMediator Mediator
 @inject NavigationManager NavigationManager
 
 <PageTitle>Kategorie - Panel Administratora</PageTitle>
@@ -23,7 +23,7 @@
 
     async Task HandleSubmit()
     {
-        await CategoryService.Create(_category);
+        await Mediator.Send(_category);
         NavigationManager.NavigateTo("/admin/categories");
     }
 

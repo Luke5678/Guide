@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 namespace Guide.Application.Features.Categories.Queries.GetCategories;
 
 public class GetCategoriesQueryHandler(GuideDbContext dbContext)
-    : IRequestHandler<GetCategoriesQuery, ICollection<CategoryDto>>
+    : IRequestHandler<GetCategoriesQuery, List<CategoryDto>>
 {
-    public async Task<ICollection<CategoryDto>> Handle(GetCategoriesQuery request, CancellationToken cancellationToken)
+    public async Task<List<CategoryDto>> Handle(GetCategoriesQuery request, CancellationToken cancellationToken)
     {
         var lang = request.LanguageCode ?? LanguageCodes.Default;
 

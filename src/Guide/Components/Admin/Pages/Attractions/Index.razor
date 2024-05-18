@@ -1,7 +1,11 @@
 ﻿@page "/admin/attractions"
 @rendermode InteractiveServer
 
-@inject IAttractionService AttractionService
+@using Guide.Application.Features.Attractions.Queries.CountAttractions
+@using Guide.Application.Features.Attractions.Queries.GetAttractions
+@using Guide.Application.Features.Categories.Commands.DeleteCategory
+
+@inject IMediator Mediator
 @inject NavigationManager NavigationManager
 
 <PageTitle>Atrakcje - Panel Administratora</PageTitle>
@@ -90,11 +94,13 @@ else
     [Parameter] [SupplyParameterFromQuery] public int Limit { get; set; }
     [Parameter] [SupplyParameterFromQuery] public string? OrderBy { get; set; }
     [Parameter] [SupplyParameterFromQuery] public string? Search { get; set; }
-    List<AttractionDto>? Attractions { get; set; }
-    int PagesAmount { get; set; }
+
+    private List<AttractionDto>? Attractions { get; set; }
+    private int PagesAmount { get; set; }
 
     private string? _searchInput;
-    readonly int[] _limits = [5, 10, 15, 20, 30];
+    private readonly int[] _limits = [5, 10, 15, 20, 30];
+    private readonly string _language = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
 
     protected override async Task OnInitializedAsync()
     {
@@ -107,12 +113,20 @@ else
         if (Limit < 5) Limit = 10;
         else if (Limit > 50) Limit = 50;
 
-        PagesAmount = (int)Math.Ceiling(await AttractionService.GetCount(Search) / (double)Limit);
+        var count = await Mediator.Send(new CountAttractionsQuery
+        {
+            Search = Search, LanguageCode = _language
+        });
+        PagesAmount = (int)Math.Ceiling(count / (double)Limit);
 
         if (Page < 1) Page = 1;
         else if (Page > PagesAmount) Page = PagesAmount;
 
-        Attractions = await AttractionService.GetAll(Page, Limit, OrderBy, Search);
+        Attractions = await Mediator.Send(new GetAttractionsQuery
+        {
+            Page = Page, Limit = Limit, OrderBy = OrderBy, Search = Search,
+            LanguageCode = _language
+        });
 
         await InvokeAsync(StateHasChanged);
     }
@@ -124,7 +138,7 @@ else
 
     async Task Delete(AttractionDto attraction)
     {
-        await AttractionService.Delete(attraction.Id);
+        await Mediator.Send(new DeleteCategoryCommand { Id = attraction.Id });
         await LoadAttractions();
     }
 
