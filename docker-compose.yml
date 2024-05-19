@@ -6,3 +6,5 @@
     build:
       context: .
       dockerfile: src/Guide/Dockerfile
+    environment:
+      - ConnectionStrings__MySql=Server=host.docker.internal;Database=guide_db;Uid=root;Pwd=toor;

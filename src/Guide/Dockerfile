@@ -9,7 +9,11 @@ ARG BUILD_CONFIGURATION=Release
 
 WORKDIR /src
 COPY ["src/Guide/", "Guide/"]
+COPY ["src/Guide.Application/", "Guide.Application/"]
 COPY ["src/Guide.Client/", "Guide.Client/"]
+COPY ["src/Guide.Domain/", "Guide.Domain/"]
+COPY ["src/Guide.Infrastructure/", "Guide.Infrastructure/"]
+COPY ["src/Guide.Shared/", "Guide.Shared/"]
 
 WORKDIR "/src/Guide"
 RUN dotnet restore "Guide.csproj"
