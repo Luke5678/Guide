@@ -13,13 +13,9 @@ public static class DependencyInjection
         services
             .AddDbContext<GuideDbContext>(options =>
             {
-                var connectionString = configuration.GetConnectionString("MySql");
-
-                if (string.IsNullOrWhiteSpace(connectionString))
-                {
-                    connectionString = Environment.GetEnvironmentVariable("MYSQLCONNSTR_localdb") // azure
+                var connectionString = Environment.GetEnvironmentVariable("MYSQLCONNSTR_localdb") // azure
+                                       ?? configuration.GetConnectionString("MySql")
                                        ?? throw new InvalidOperationException("Connection string not found.");
-                }
 
                 var db = options.UseMySql(
                     connectionString,
