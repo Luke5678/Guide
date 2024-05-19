@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.RegularExpressions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -13,9 +14,26 @@ public static class DependencyInjection
         services
             .AddDbContext<GuideDbContext>(options =>
             {
-                var connectionString = Environment.GetEnvironmentVariable("MYSQLCONNSTR_localdb") // azure
-                                       ?? configuration.GetConnectionString("MySql")
-                                       ?? throw new InvalidOperationException("Connection string not found.");
+                var connectionString = configuration.GetConnectionString("MySql");
+
+                var azure = Environment.GetEnvironmentVariable("MYSQLCONNSTR_localdb");
+                if (azure != null)
+                {
+                    var dbhost = Regex.Match(azure, @"Data Source=(.+?);").Groups[1].Value;
+                    var server = dbhost.Split(':')[0];
+                    var port = dbhost.Split(':')[1];
+                    var dbname = Regex.Match(azure, @"Database=(.+?);").Groups[1].Value;
+                    var dbusername = Regex.Match(azure, @"User Id=(.+?);").Groups[1].Value;
+                    var dbpassword = Regex.Match(azure, @"Password=(.+?)$").Groups[1].Value;
+
+                    connectionString =
+                        $@"server={server};userid={dbusername};password={dbpassword};database={dbname};port={port};pooling = false; convert zero datetime=True;";
+                }
+
+                if (connectionString == null)
+                {
+                    throw new InvalidOperationException("Connection string not found.");
+                }
 
                 var db = options.UseMySql(
                     connectionString,
