@@ -1,16 +1,15 @@
 ﻿using AutoMapper;
+using Guide.Application.Common.Services;
 using Guide.Domain.Entities;
 using Guide.Infrastructure;
 using Guide.Shared.Common.Dtos;
 using MediatR;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using Serilog;
 
 namespace Guide.Application.Features.AttractionImages.Commands.AddAttractionImages;
 
-public class AddAttractionImagesCommandHandler(GuideDbContext dbContext, IWebHostEnvironment env, IMapper mapper)
+public class AddAttractionImagesCommandHandler(GuideDbContext dbContext, IMapper mapper, BlobService blobService)
     : IRequestHandler<AddAttractionImagesCommand, List<AttractionImageDto>>
 {
     public async Task<List<AttractionImageDto>> Handle(AddAttractionImagesCommand request,
@@ -21,25 +20,15 @@ public class AddAttractionImagesCommandHandler(GuideDbContext dbContext, IWebHos
         const int maxFileSize = 1024 * 1024 * 50; // 50 MB
 
         var guid = Guid.NewGuid().ToString();
-        var basePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "wwwroot", "uploads", guid);
-        var paths = new List<string>();
-
-        if (env.IsDevelopment())
-        {
-            basePath = basePath.Replace(@"bin\Debug\net8.0\", "");
-        }
-
-        Directory.CreateDirectory(basePath);
+        var urls = new List<string>();
 
         foreach (var file in request.Files)
         {
             try
             {
-                var path = Path.Combine(basePath, file.Name);
-                await using FileStream fs = new(path, FileMode.Create);
-                await file.OpenReadStream(maxFileSize, cancellationToken).CopyToAsync(fs, cancellationToken);
-
-                paths.Add($"{guid}/{file.Name}");
+                var stream = file.OpenReadStream(maxFileSize, cancellationToken);
+                var url = await blobService.UploadFileAsync(stream, $"{guid}/{file.Name}");
+                urls.Add(url);
             }
             catch (Exception ex)
             {
@@ -53,11 +42,11 @@ public class AddAttractionImagesCommandHandler(GuideDbContext dbContext, IWebHos
                 .Include(x => x.Images)
                 .First(x => x.Id == request.AttractionId);
 
-            foreach (var path in paths)
+            foreach (var url in urls)
             {
                 attraction.Images.Add(new AttractionImage
                 {
-                    Path = path
+                    Url = url
                 });
             }
 
@@ -72,11 +61,11 @@ public class AddAttractionImagesCommandHandler(GuideDbContext dbContext, IWebHos
 
         var images = new List<AttractionImage>();
 
-        foreach (var path in paths)
+        foreach (var url in urls)
         {
             var image = new AttractionImage
             {
-                Path = path
+                Url = url
             };
 
             images.Add(image);
