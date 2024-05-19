@@ -13,16 +13,19 @@ public static class DependencyInjection
         services
             .AddDbContext<GuideDbContext>(options =>
             {
-                // var connectionString = configuration.GetConnectionString("MySqlConnection");
-                // var db = options.UseMySql(
-                //     connectionString,
-                //     ServerVersion.AutoDetect(connectionString),
-                //     options => options.UseMicrosoftJson());
+                var connectionString = configuration.GetConnectionString("MySql");
 
-                var connectionString = configuration.GetConnectionString("DefaultConnection") ??
-                                       throw new InvalidOperationException(
-                                           "Connection string 'DefaultConnection' not found.");
-                var db = options.UseSqlite(connectionString);
+                if (string.IsNullOrWhiteSpace(connectionString))
+                {
+                    connectionString = Environment.GetEnvironmentVariable("MYSQLCONNSTR_localdb") // azure
+                                       ?? throw new InvalidOperationException("Connection string not found.");
+                }
+
+                var db = options.UseMySql(
+                    connectionString,
+                    ServerVersion.AutoDetect(connectionString),
+                    x => x.UseMicrosoftJson()
+                );
 
                 var isDev = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
                 if (isDev)

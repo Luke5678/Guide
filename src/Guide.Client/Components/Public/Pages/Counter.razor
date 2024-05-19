@@ -15,14 +15,7 @@
     
     protected override void OnInitialized ()
     {
-        if (OperatingSystem.IsBrowser())
-        {
-            _handler = "WASM";
-        }
-        else
-        {
-            _handler = "Server";
-        }
+        _handler = OperatingSystem.IsBrowser() ? "WASM" : "Server";
     }
 
     private void IncrementCount()

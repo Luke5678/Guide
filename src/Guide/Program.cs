@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Guide.Components;
 using Guide.Domain.Entities;
 using Guide.Infrastructure;
+using Guide.Infrastructure.Common;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.FileProviders;
 using Serilog;
@@ -72,16 +73,12 @@ try
     builder.Services.AddControllers();
 
     var app = builder.Build();
+    
+    app.ApplyMigration();
+    app.CreateDefaultUser();
 
     app.UseDefaultFiles();
     app.UseStaticFiles();
-    // var staticFilesPath = $@"{AppDomain.CurrentDomain.BaseDirectory}/wwwroot";
-    // Directory.CreateDirectory(staticFilesPath);
-    // app.UseStaticFiles(new StaticFileOptions
-    // {
-    //     FileProvider = new PhysicalFileProvider($@"{AppDomain.CurrentDomain.BaseDirectory}/wwwroot")
-    // });
-
 
     app.UseSerilogRequestLogging();
 
