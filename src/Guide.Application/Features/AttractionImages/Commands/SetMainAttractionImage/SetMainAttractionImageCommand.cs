@@ -5,5 +5,5 @@ namespace Guide.Application.Features.AttractionImages.Commands.SetMainAttraction
 
 public class SetMainAttractionImageCommand : IRequest
 {
-    public AttractionImage Image { get; set; } = null!;
+    public int Id { get; set; }
 }

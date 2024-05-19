@@ -1,9 +1,11 @@
 ﻿using System.Reflection;
-using FluentValidation;
-using Guide.Application.Common.Behaviors;
-using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using FluentValidation;
+using MediatR;
+using Guide.Application.Common.Behaviors;
+using Guide.Application.Common.Services;
+using Guide.Shared.Common.Interfaces;
 
 namespace Guide.Application;
 
@@ -14,8 +16,9 @@ public static class DependencyInjection
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-        
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
+        services.AddScoped<IAttractionService, AttractionService>();
 
         return services;
     }

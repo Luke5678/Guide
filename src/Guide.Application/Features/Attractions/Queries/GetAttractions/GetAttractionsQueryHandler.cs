@@ -15,10 +15,19 @@ public class GetAttractionsQueryHandler(GuideDbContext dbContext)
     {
         var lang = request.LanguageCode ?? LanguageCodes.Default;
 
+        if (request.Limit is > 100 or < 1)
+        {
+            request.Limit = 20;
+        }
+
         var query = dbContext.Attractions
             .Select(x => new AttractionDto
             {
                 Id = x.Id, Name = x.Translations.First(x => x.LanguageCode == lang).Name,
+                Images = x.Images.Select(y => new AttractionImageDto
+                {
+                    Url = y.Url, IsMain = y.IsMain
+                }),
                 Categories = x.Categories.Select(x => new CategoryDto
                 {
                     Id = x.Id, Name = x.Translations.First(x => x.LanguageCode == lang).Name
@@ -55,6 +64,10 @@ public class GetAttractionsQueryHandler(GuideDbContext dbContext)
         if (request.Page > 0 && request.Limit > 0)
         {
             query = query.Skip((request.Page - 1) * request.Limit).Take(request.Limit);
+        }
+        else
+        {
+            query = query.Take(request.Limit);
         }
 
         return await query.ToListAsync(cancellationToken);

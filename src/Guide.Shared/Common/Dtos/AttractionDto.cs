@@ -10,7 +10,9 @@ public class AttractionDto : IMapFrom<Attraction>
     public string Name { get; set; } = null!;
     public string Description { get; set; } = null!;
     public IEnumerable<CategoryDto> Categories { get; set; } = [];
-    public IEnumerable<AttractionImage> Images { get; set; } = [];
+    public IEnumerable<AttractionImageDto> Images { get; set; } = [];
+
+    public AttractionImageDto? MainImage => Images.FirstOrDefault(x => x.IsMain);
 
     public void Mapping(Profile profile)
     {

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace Guide.Controllers;
 
 [ApiController]
-[Authorize]
 public class BaseController : ControllerBase
 {
     private IMediator? _mediator;

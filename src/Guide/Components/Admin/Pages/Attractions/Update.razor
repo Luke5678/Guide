@@ -101,7 +101,7 @@
 
     private UpdateAttractionCommand? _request;
     private List<CategoryDto> _categories = [];
-    private List<AttractionImage> _images = [];
+    private List<AttractionImageDto> _images = [];
     private bool _isProcessingFiles;
 
     protected override async Task OnInitializedAsync()
@@ -160,17 +160,17 @@
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task DeleteImage(AttractionImage image)
+    private async Task DeleteImage(AttractionImageDto image)
     {
-        await Mediator.Send(new DeleteAttractionImageCommand { Image = image });
+        await Mediator.Send(new DeleteAttractionImageCommand { Id = image.Id });
         _images.Remove(image);
 
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task OnMainImageChange(AttractionImage targetImage)
+    private async Task OnMainImageChange(AttractionImageDto targetImage)
     {
-        await Mediator.Send(new SetMainAttractionImageCommand { Image = targetImage });
+        await Mediator.Send(new SetMainAttractionImageCommand { Id = targetImage.Id });
 
         foreach (var image in _images)
         {

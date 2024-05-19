@@ -1,5 +1,7 @@
-﻿using Guide.Domain.Entities;
+﻿using AutoMapper;
+using Guide.Domain.Entities;
 using Guide.Infrastructure;
+using Guide.Shared.Common.Dtos;
 using MediatR;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -8,10 +10,10 @@ using Serilog;
 
 namespace Guide.Application.Features.AttractionImages.Commands.AddAttractionImages;
 
-public class AddAttractionImagesCommandHandler(GuideDbContext dbContext, IWebHostEnvironment env)
-    : IRequestHandler<AddAttractionImagesCommand, List<AttractionImage>>
+public class AddAttractionImagesCommandHandler(GuideDbContext dbContext, IWebHostEnvironment env, IMapper mapper)
+    : IRequestHandler<AddAttractionImagesCommand, List<AttractionImageDto>>
 {
-    public async Task<List<AttractionImage>> Handle(AddAttractionImagesCommand request,
+    public async Task<List<AttractionImageDto>> Handle(AddAttractionImagesCommand request,
         CancellationToken cancellationToken)
     {
         if (!request.Files.Any()) return [];
@@ -65,7 +67,7 @@ public class AddAttractionImagesCommandHandler(GuideDbContext dbContext, IWebHos
             }
 
             await dbContext.SaveChangesAsync(cancellationToken);
-            return attraction.Images.ToList();
+            return mapper.Map<List<AttractionImageDto>>(attraction.Images.ToList());
         }
 
         var images = new List<AttractionImage>();
@@ -82,6 +84,6 @@ public class AddAttractionImagesCommandHandler(GuideDbContext dbContext, IWebHos
         }
 
         await dbContext.SaveChangesAsync(cancellationToken);
-        return images;
+        return mapper.Map<List<AttractionImageDto>>(images);
     }
 }

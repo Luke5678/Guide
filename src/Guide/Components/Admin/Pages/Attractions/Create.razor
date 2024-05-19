@@ -127,15 +127,15 @@
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task DeleteImage(AttractionImage image)
+    private async Task DeleteImage(AttractionImageDto image)
     {
-        await Mediator.Send(new DeleteAttractionImageCommand { Image = image });
+        await Mediator.Send(new DeleteAttractionImageCommand { Id = image.Id });
         _request.Images.Remove(image);
 
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task OnMainImageChange(AttractionImage targetImage)
+    private async Task OnMainImageChange(AttractionImageDto targetImage)
     {
         foreach (var image in _request.Images)
         {

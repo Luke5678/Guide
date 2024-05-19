@@ -10,11 +10,11 @@ public class SetMainAttractionImageCommandHandler(GuideDbContext dbContext)
     public async Task Handle(SetMainAttractionImageCommand request, CancellationToken cancellationToken)
     {
         await dbContext.AttractionImages
-            .Where(x => x.AttractionId == request.Image.AttractionId)
+            .Where(x => x.AttractionId == request.Id)
             .ExecuteUpdateAsync(x => x.SetProperty(y => y.IsMain, false), cancellationToken);
 
         await dbContext.AttractionImages
-            .Where(x => x.Id == request.Image.Id)
+            .Where(x => x.Id == request.Id)
             .ExecuteUpdateAsync(x => x.SetProperty(y => y.IsMain, true), cancellationToken);
     }
 }

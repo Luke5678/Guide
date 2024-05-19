@@ -5,5 +5,5 @@ namespace Guide.Application.Features.AttractionImages.Commands.DeleteAttractionI
 
 public class DeleteAttractionImageCommand : IRequest
 {
-    public AttractionImage Image { get; set; } = null!;
+    public int Id { get; set; }
 }

@@ -1,24 +1,28 @@
 ﻿@page "/"
 @rendermode InteractiveWebAssembly
 
-<PageTitle>Counter</PageTitle>
+@using Guide.Shared.Common.Dtos
+@using Guide.Shared.Common.Interfaces
 
-<h1>Counter @_handler</h1>
+@inject IAttractionService AttractionService
+@inject PersistentComponentState AppState
+@implements IDisposable
 
-<p role="status">Current count: @_currentCount</p>
-
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<PageTitle>Przewodnik Opolskie</PageTitle>
 
 <section class="mb-5">
     <h2>Popularne</h2>
     <div class="row">
-        @foreach (var i in Enumerable.Range(1, 4))
+        @foreach (var attraction in _attractions)
         {
             <div class="col-md-3 mb-4">
                 <div class="card">
-                    <img src="path/to/image1.jpg" class="card-img-top" alt="Atrakcja Popularna @i">
+                    @if (attraction.MainImage != null)
+                    {
+                        <img src="@attraction.MainImage.Url" class="card-img-top" alt="@attraction.Name">
+                    }
                     <div class="card-body">
-                        <h5 class="card-title">Atrakcja Popularna @i</h5>
+                        <h5 class="card-title">@attraction.Name</h5>
                         <p class="card-text">Krótki opis atrakcji.</p>
                         <a href="#" class="btn btn-primary">Czytaj więcej</a>
                     </div>
@@ -29,19 +33,29 @@
 </section>
 
 @code {
-    private int _currentCount;
-    private string _handler = "";
+    private PersistingComponentStateSubscription _subscription;
+    private List<AttractionDto> _attractions = [];
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        _handler = OperatingSystem.IsBrowser() ? "WASM" : "Server";
+        _subscription = AppState.RegisterOnPersisting(Persist);
+
+        var foundInState = AppState.TryTakeFromJson<List<AttractionDto>>("attractions", out var attractions);
+
+        _attractions = (foundInState
+            ? attractions
+            : await AttractionService.Get(limit: 4))!;
     }
 
-    private void IncrementCount()
+    private Task Persist()
     {
-        _currentCount++;
-        _handler = OperatingSystem.IsBrowser() ? "WASM" : "Server";
-        StateHasChanged();
+        AppState.PersistAsJson("attractions", _attractions);
+        return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        _subscription.Dispose();
     }
 
 }
