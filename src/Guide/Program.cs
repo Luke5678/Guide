@@ -25,9 +25,7 @@ try
     // Add services to the container.
     builder.Services.AddSerilog((services, lc) => lc
         .ReadFrom.Configuration(builder.Configuration)
-        .ReadFrom.Services(services)
-        .Enrich.FromLogContext()
-        .WriteTo.Console());
+        .ReadFrom.Services(services));
 
     builder.Services.AddRazorComponents()
         .AddInteractiveServerComponents()

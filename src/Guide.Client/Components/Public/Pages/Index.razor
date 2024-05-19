@@ -1,61 +1,100 @@
 ﻿@page "/"
-@rendermode InteractiveWebAssembly
 
 @using Guide.Shared.Common.Dtos
 @using Guide.Shared.Common.Interfaces
 
 @inject IAttractionService AttractionService
-@inject PersistentComponentState AppState
-@implements IDisposable
 
 <PageTitle>Przewodnik Opolskie</PageTitle>
 
-<section class="mb-5">
-    <h2>Popularne</h2>
-    <div class="row">
-        @foreach (var attraction in _attractions)
-        {
-            <div class="col-md-3 mb-4">
-                <div class="card">
-                    @if (attraction.MainImage != null)
-                    {
-                        <img src="@attraction.MainImage.Url" class="card-img-top" alt="@attraction.Name">
-                    }
-                    <div class="card-body">
-                        <h5 class="card-title">@attraction.Name</h5>
-                        <p class="card-text">Krótki opis atrakcji.</p>
-                        <a href="#" class="btn btn-primary">Czytaj więcej</a>
+@if (_recommended.Count > 0)
+{
+    <section class="mb-5">
+        <h2>Polecane</h2>
+        <div class="row">
+            @foreach (var attraction in _recommended)
+            {
+                <div class="col-md-3 mb-4">
+                    <div class="card">
+                        @if (attraction.MainImage != null)
+                        {
+                            <img src="@attraction.MainImage.Url" class="card-img-top" alt="@attraction.Name">
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@attraction.Name</h5>
+                            <p class="card-text">Krótki opis atrakcji.</p>
+                            <a href="#" class="btn btn-primary">Czytaj więcej</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
-    </div>
-</section>
+            }
+        </div>
+    </section>
+}
+
+@if (_popular.Count > 0)
+{
+    <section class="mb-5">
+        <h2>Popularne</h2>
+        <div class="row">
+            @foreach (var attraction in _popular)
+            {
+                <div class="col-md-3 mb-4">
+                    <div class="card">
+                        @if (attraction.MainImage != null)
+                        {
+                            <img src="@attraction.MainImage.Url" class="card-img-top" alt="@attraction.Name">
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@attraction.Name</h5>
+                            <p class="card-text">Krótki opis atrakcji.</p>
+                            <a href="#" class="btn btn-primary">Czytaj więcej</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+}
+
+@if (_commented.Count > 0)
+{
+    <section class="mb-5">
+        <h2>Najczęściej komentowane</h2>
+        <div class="row">
+            @foreach (var attraction in _commented)
+            {
+                <div class="col-md-3 mb-4">
+                    <div class="card">
+                        @if (attraction.MainImage != null)
+                        {
+                            <img src="@attraction.MainImage.Url" class="card-img-top" alt="@attraction.Name">
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@attraction.Name</h5>
+                            <p class="card-text">Krótki opis atrakcji.</p>
+                            <a href="#" class="btn btn-primary">Czytaj więcej</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+}
 
 @code {
-    private PersistingComponentStateSubscription _subscription;
-    private List<AttractionDto> _attractions = [];
+    // TODO
+    private List<AttractionDto> _recommended = [];
+    private List<AttractionDto> _popular = [];
+    private List<AttractionDto> _commented = [];
 
     protected override async Task OnInitializedAsync()
     {
-        _subscription = AppState.RegisterOnPersisting(Persist);
+        var list = await AttractionService.Get(limit: 12);
 
-        var foundInState = AppState.TryTakeFromJson<List<AttractionDto>>("attractions", out var attractions);
-
-        _attractions = (foundInState
-            ? attractions
-            : await AttractionService.Get(limit: 4))!;
-    }
-
-    private Task Persist()
-    {
-        AppState.PersistAsJson("attractions", _attractions);
-        return Task.CompletedTask;
-    }
-
-    public void Dispose()
-    {
-        _subscription.Dispose();
+        _recommended = list.Take(4).ToList();
+        _popular = list.Skip(4).Take(4).ToList();
+        _commented = list.Skip(8).Take(4).ToList();
     }
 
 }

@@ -5,8 +5,10 @@
 @inject NavigationManager NavigationManager
 
 <AuthorizeView>
-    <div class="container d-flex gap-2 my-2">
-        <div class="col"></div>
+    <div class="container d-flex flex-wrap justify-content-center gap-2 my-2">
+        <div class="btn btn-danger">
+            Wyrenderowano przez: @_handler
+        </div>
         <a class="btn btn-primary" href="/admin">Admin</a>
         <form action="Account/Logout" method="post">
             <AntiforgeryToken/>
@@ -20,11 +22,22 @@
 
 @code {
     private string? _currentUrl;
+    private string _handler = "";
 
     protected override void OnInitialized()
     {
         _currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         NavigationManager.LocationChanged += OnLocationChanged;
+
+
+        if (OperatingSystem.IsBrowser())
+        {
+            _handler = "WASM";
+        }
+        else
+        {
+            _handler = "Server";
+        }
     }
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
