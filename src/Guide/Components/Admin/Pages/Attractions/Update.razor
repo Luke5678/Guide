@@ -4,16 +4,20 @@
 @using Guide.Application.Features.AttractionImages.Commands.AddAttractionImages
 @using Guide.Application.Features.AttractionImages.Commands.DeleteAttractionImage
 @using Guide.Application.Features.AttractionImages.Commands.SetMainAttractionImage
-@using TinyMCE.Blazor
-@using Guide.Common.Static
 @using Guide.Application.Features.Attractions.Commands.UpdateAttraction
 @using Guide.Application.Features.Attractions.Queries.GetAttraction
 @using Guide.Application.Features.Categories.Queries.GetCategories
+@using TinyMCE.Blazor
 
 @inject IMediator Mediator
 @inject NavigationManager NavigationManager
 
 <PageTitle>Atrakcje - Panel Administratora</PageTitle>
+
+<SectionContent SectionName="js">
+    <script src="_content/TinyMCE.Blazor/tinymce-blazor.js"></script>
+    <script src="js/tinyMceConf.js"></script>
+</SectionContent>
 
 @if (_request != null)
 {
@@ -44,7 +48,7 @@
             <Editor Field="() => _request.Description"
                     @bind-Value="_request.Description"
                     ScriptSrc="/js/tinymce/tinymce.min.js"
-                    Conf="TinyMceConfig.Config"/>
+                    JsConfSrc="tinyMceConf"/>
         </div>
         <button type="submit" class="btn btn-primary">Zapisz</button>
     </EditForm>

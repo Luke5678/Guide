@@ -30,6 +30,6 @@ public class UploadController : BaseController
 
         return result == null
             ? BadRequest()
-            : Ok(new { location = $"/uploads/{result}" });
+            : Ok(new { location = result });
     }
 }

@@ -5,13 +5,17 @@
 @using Guide.Application.Features.AttractionImages.Commands.DeleteAttractionImage
 @using Guide.Application.Features.Attractions.Commands.CreateAttraction
 @using Guide.Application.Features.Categories.Queries.GetCategories
-@using Guide.Common.Static
 @using TinyMCE.Blazor
 
 @inject IMediator Mediator
 @inject NavigationManager NavigationManager
 
 <PageTitle>Atrakcje - Panel Administratora</PageTitle>
+
+<SectionContent SectionName="js">
+    <script src="_content/TinyMCE.Blazor/tinymce-blazor.js"></script>
+    <script src="js/tinyMceConf.js"></script>
+</SectionContent>
 
 <EditForm Model="_request" OnValidSubmit="HandleSubmit" class="mb-5">
     <FluentValidationValidator/>
@@ -31,11 +35,11 @@
     </div>
     <div class="mb-3">
         <label class="form-label">Opis</label>
-        <ValidationMessage For="() => _request.Description"/>
         <Editor Field="() => _request.Description"
                 @bind-Value="_request.Description"
                 ScriptSrc="/js/tinymce/tinymce.min.js"
-                Conf="TinyMceConfig.Config"/>
+                JsConfSrc="tinyMceConf"/>
+        <ValidationMessage For="() => _request.Description"/>
     </div>
     <button type="submit" class="btn btn-primary">Zapisz</button>
 </EditForm>
