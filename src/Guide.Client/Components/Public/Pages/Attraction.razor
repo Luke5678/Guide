@@ -1,0 +1,34 @@
+﻿@page "/attraction/{id:int}"
+
+@inject IAttractionService AttractionService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Przewodnik Opolskie</PageTitle>
+
+@if (_attraction != null)
+{
+    <h1>
+        @_attraction.Name
+    </h1>
+    <div>
+        @((MarkupString)_attraction.Description)
+    </div>
+}
+
+@code {
+    [Parameter] public int? Id { get; set; }
+
+    private AttractionDto? _attraction;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id.HasValue)
+        {
+            _attraction = await AttractionService.GetById(Id.Value);
+            if (_attraction != null) return;
+        }
+
+        NavigationManager.NavigateTo("/");
+    }
+
+}

@@ -20,7 +20,7 @@
                         <div class="card-body">
                             <h5 class="card-title">@attraction.Name</h5>
                             <p class="card-text">Krótki opis atrakcji.</p>
-                            <a href="#" class="btn btn-primary">Czytaj więcej</a>
+                            <a href="/attraction/@attraction.Id" class="btn btn-primary">Czytaj więcej</a>
                         </div>
                     </div>
                 </div>
@@ -45,7 +45,7 @@
                         <div class="card-body">
                             <h5 class="card-title">@attraction.Name</h5>
                             <p class="card-text">Krótki opis atrakcji.</p>
-                            <a href="#" class="btn btn-primary">Czytaj więcej</a>
+                            <a href="/attraction/@attraction.Id" class="btn btn-primary">Czytaj więcej</a>
                         </div>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
                         <div class="card-body">
                             <h5 class="card-title">@attraction.Name</h5>
                             <p class="card-text">Krótki opis atrakcji.</p>
-                            <a href="#" class="btn btn-primary">Czytaj więcej</a>
+                            <a href="/attraction/@attraction.Id" class="btn btn-primary">Czytaj więcej</a>
                         </div>
                     </div>
                 </div>
@@ -80,6 +80,7 @@
 }
 
 @code {
+
     // TODO
     private List<AttractionDto> _recommended = [];
     private List<AttractionDto> _popular = [];
