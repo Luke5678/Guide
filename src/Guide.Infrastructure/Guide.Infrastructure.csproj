@@ -12,7 +12,6 @@
         <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
         <PackageReference Include="Pomelo.EntityFrameworkCore.MySql.Json.Microsoft" Version="8.0.2" />
         <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.5" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.5" />
     </ItemGroup>
 
