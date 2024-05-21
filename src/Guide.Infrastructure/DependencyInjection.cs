@@ -16,7 +16,11 @@ public static class DependencyInjection
                 var connectionString = configuration.GetConnectionString("Default")
                                        ?? throw new InvalidOperationException("Connection string not found.");
 
-                var db = options.UseSqlServer(connectionString);
+                var db = options.UseMySql(
+                    connectionString,
+                    ServerVersion.AutoDetect(connectionString),
+                    x => x.UseMicrosoftJson()
+                );
 
                 var isDev = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
                 if (isDev)
