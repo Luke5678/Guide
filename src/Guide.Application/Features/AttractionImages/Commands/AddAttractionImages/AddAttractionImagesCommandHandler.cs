@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Guide.Application.Common.Services;
+using Guide.Application.Common.Interfaces;
 using Guide.Domain.Entities;
 using Guide.Infrastructure;
 using Guide.Shared.Common.Dtos;
@@ -9,7 +9,7 @@ using Serilog;
 
 namespace Guide.Application.Features.AttractionImages.Commands.AddAttractionImages;
 
-public class AddAttractionImagesCommandHandler(GuideDbContext dbContext, IMapper mapper, BlobService blobService)
+public class AddAttractionImagesCommandHandler(GuideDbContext dbContext, IMapper mapper, IUploadService uploadService)
     : IRequestHandler<AddAttractionImagesCommand, List<AttractionImageDto>>
 {
     public async Task<List<AttractionImageDto>> Handle(AddAttractionImagesCommand request,
@@ -19,7 +19,6 @@ public class AddAttractionImagesCommandHandler(GuideDbContext dbContext, IMapper
 
         const int maxFileSize = 1024 * 1024 * 50; // 50 MB
 
-        var guid = Guid.NewGuid().ToString();
         var urls = new List<string>();
 
         foreach (var file in request.Files)
@@ -27,7 +26,7 @@ public class AddAttractionImagesCommandHandler(GuideDbContext dbContext, IMapper
             try
             {
                 var stream = file.OpenReadStream(maxFileSize, cancellationToken);
-                var url = await blobService.UploadFileAsync(stream, $"{guid}/{file.Name}");
+                var url = await uploadService.UploadFileAsync(stream, file.Name);
                 urls.Add(url);
             }
             catch (Exception ex)

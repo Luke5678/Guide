@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using FluentValidation;
 using MediatR;
 using Guide.Application.Common.Behaviors;
+using Guide.Application.Common.Interfaces;
 using Guide.Application.Common.Services;
 using Guide.Shared.Common.Interfaces;
 
@@ -19,7 +20,7 @@ public static class DependencyInjection
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
         services.AddScoped<IAttractionService, AttractionService>();
-        services.AddSingleton<BlobService>();
+        services.AddScoped<IUploadService, UploadService>();
 
         return services;
     }

@@ -1,11 +1,11 @@
-﻿using Guide.Application.Common.Services;
+﻿using Guide.Application.Common.Interfaces;
 using Guide.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Guide.Application.Features.AttractionImages.Commands.DeleteAttractionImage;
 
-public class DeleteAttractionImageCommandHandler(GuideDbContext dbContext, BlobService blobService)
+public class DeleteAttractionImageCommandHandler(GuideDbContext dbContext, IUploadService uploadService)
     : IRequestHandler<DeleteAttractionImageCommand>
 {
     public async Task Handle(DeleteAttractionImageCommand request, CancellationToken cancellationToken)
@@ -16,8 +16,7 @@ public class DeleteAttractionImageCommandHandler(GuideDbContext dbContext, BlobS
 
         if (image == null) return;
 
-        var path = image.Url.Split("uploads/").Last();
-        await blobService.DeleteFileAsync(path);
+        await uploadService.DeleteFileAsync(image.Url);
 
         await dbContext.AttractionImages
             .Where(x => x.Id == image.Id)

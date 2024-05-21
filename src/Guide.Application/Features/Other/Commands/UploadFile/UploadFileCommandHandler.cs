@@ -1,22 +1,17 @@
-﻿using Guide.Application.Common.Services;
+﻿using Guide.Application.Common.Interfaces;
 using MediatR;
 using Serilog;
 
 namespace Guide.Application.Features.Other.Commands.UploadFile;
 
-public class UploadFileCommandHandler(BlobService blobService) : IRequestHandler<UploadFileCommand, string?>
+public class UploadFileCommandHandler(IUploadService uploadService) : IRequestHandler<UploadFileCommand, string?>
 {
     public async Task<string?> Handle(UploadFileCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            var guid = Guid.NewGuid().ToString();
-            var filePath = $"{guid}/{request.File.FileName}";
-            
             var stream = request.File.OpenReadStream();
-            var uri = await blobService.UploadFileAsync(stream, filePath);
-
-            return uri;
+            return await uploadService.UploadFileAsync(stream, request.File.FileName);
         }
         catch (Exception ex)
         {
