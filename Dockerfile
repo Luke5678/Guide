@@ -21,4 +21,7 @@ RUN dotnet publish "Guide.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:Use
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Guide.dll"]
+
+COPY --chmod=755 wait-for-it.sh /wait-for-it.sh
+
+ENTRYPOINT ["/wait-for-it.sh", "db:3306", "--", "dotnet", "Guide.dll"]
