@@ -4,6 +4,9 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 /.vs
+/.vscode
 /.idea
 sqlite.db*
 src/Guide/wwwroot/uploads
+/uploads
+/mysql-data

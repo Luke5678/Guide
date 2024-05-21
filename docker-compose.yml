@@ -1,10 +1,23 @@
 ﻿services:
   app:
     image: guide
+    build: .
     ports:
       - "80:8080"
-    build:
-      context: .
-      dockerfile: src/Guide/Dockerfile
+    volumes:
+      - ./uploads:/app/wwwroot/uploads
+    depends_on:
+      - db
     environment:
-      - ConnectionStrings__MySql=Server=host.docker.internal;Database=guide_db;Uid=root;Pwd=toor;
+      - ConnectionStrings__Default=Server=db;Database=guide_db;Uid=guide_user;Pwd=user_password;
+  db:
+    image: mysql:8
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: toor
+      MYSQL_DATABASE: guide_db
+      MYSQL_USER: guide_user
+      MYSQL_PASSWORD: user_password
