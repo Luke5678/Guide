@@ -10,3 +10,4 @@ sqlite.db*
 src/Guide/wwwroot/uploads
 /uploads
 /mysql-data
+*.DotSettings.user

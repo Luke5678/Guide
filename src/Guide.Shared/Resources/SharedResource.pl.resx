@@ -1,0 +1,35 @@
+﻿<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="Przewodnik Opolskie" xml:space="preserve">
+        <value>Przewodnik Opolskie</value>
+    </data>
+    <data name="Polecane" xml:space="preserve">
+        <value>Polecane</value>
+    </data>
+    <data name="Popularne" xml:space="preserve">
+        <value>Popularne</value>
+    </data>
+    <data name="Najczęściej komentowane" xml:space="preserve">
+        <value>Najczęściej komentowane</value>
+    </data>
+    <data name="Interaktywny Przewodnik po Województwie Opolskim" xml:space="preserve">
+        <value>Interaktywny Przewodnik po Województwie Opolskim</value>
+    </data>
+    <data name="Odkryj najciekawsze miejsca i atrakcje w regionie!" xml:space="preserve">
+        <value>Odkryj najciekawsze miejsca i atrakcje w regionie!</value>
+    </data>
+    <data name="Zobacz więcej" xml:space="preserve">
+        <value>Zobacz więcej</value>
+    </data>
+</root>

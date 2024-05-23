@@ -1,14 +1,16 @@
 ﻿@using System.Globalization
 @using Guide.Shared.Common.Static
+@using Microsoft.Extensions.Localization
 
 @rendermode InteractiveWebAssembly
 
+@inject IStringLocalizer<SharedResource> Loc
 @inject NavigationManager NavigationManager
 @inject LocalizationService LocalizationService
 
 <select class="form-select" @onchange="ChangeLanguage">
     <option value="pl" selected="@("pl" == _language)">Polski</option>
-    <option value="en" selected="@("en" == _language)">Angielski</option>
+    <option value="en" selected="@("en" == _language)">English</option>
 </select>
 
 @code {
