@@ -3,7 +3,7 @@
 @rendermode InteractiveServer
 
 @inject NavigationManager NavigationManager
-@inject CultureCookieService CultureCookieService
+@inject LocalizationService LocalizationService
 
 <label class="form-label">Język</label>
 <select class="form-select" @onchange="ChangeLanguage">
@@ -16,7 +16,7 @@
 
     async Task ChangeLanguage(ChangeEventArgs e)
     {
-        await CultureCookieService.SetCulture(e.Value?.ToString() ?? "pl");
+        await LocalizationService.SetCultureCookie(e.Value?.ToString() ?? "pl");
         NavigationManager.Refresh(true);
     }
 

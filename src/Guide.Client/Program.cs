@@ -18,11 +18,11 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
 builder.Services.AddLocalization();
 builder.Services.AddScoped<ICookieService, BrowserCookieService>();
-builder.Services.AddScoped<CultureCookieService>();
+builder.Services.AddScoped<LocalizationService>();
 builder.Services.AddScoped<IAttractionService, AttractionService>();
 
 var app = builder.Build();
 
-app.Services.GetService<CultureCookieService>()?.SetCultureFromCookie();
+app.Services.GetService<LocalizationService>()?.InitializeCulture();
 
 await app.RunAsync();

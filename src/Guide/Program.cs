@@ -8,8 +8,8 @@ using Guide.Components;
 using Guide.Domain.Entities;
 using Guide.Infrastructure;
 using Guide.Infrastructure.Common;
+using Guide.Shared.Common.Static;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.Extensions.FileProviders;
 using Serilog;
 using Serilog.Events;
 
@@ -54,26 +54,27 @@ try
 
     builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
 
-    builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+    builder.Services.AddLocalization();
     builder.Services.Configure<RequestLocalizationOptions>(options =>
     {
-        options.SetDefaultCulture("pl");
-        options.AddSupportedCultures(["en", "pl"]);
-        options.AddSupportedUICultures(["en", "pl"]);
+        options.SetDefaultCulture(LanguageCodes.Default);
+        options.AddSupportedCultures(LanguageCodes.List);
+        options.AddSupportedUICultures(LanguageCodes.List);
         options.RequestCultureProviders = new List<IRequestCultureProvider>
         {
-            new CookieRequestCultureProvider()
+            new CookieRequestCultureProvider(),
+            new AcceptLanguageHeaderRequestCultureProvider()
         };
     });
 
     builder.AddBlazorCookies();
-    builder.Services.AddScoped<CultureCookieService>();
+    builder.Services.AddScoped<LocalizationService>();
 
     builder.Services.AddApplication(builder.Configuration);
     builder.Services.AddControllers();
 
     var app = builder.Build();
-    
+
     app.ApplyMigration();
     app.CreateDefaultUser();
 

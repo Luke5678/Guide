@@ -4,43 +4,48 @@ using Guide.Shared.Common.Static;
 
 namespace Guide.Client.Common.Services;
 
-public class CultureCookieService(ICookieService cookieService)
+public class LocalizationService(ICookieService cookieService)
 {
     private const string CookieName = ".AspNetCore.Culture";
-    private const char CookieSeparator = '|';
     private const string CulturePrefix = "c=";
+    private const char CookieSeparator = '|';
 
-    public async Task SetCulture(string language)
+    public async Task InitializeCulture()
+    {
+        var cookie = await cookieService.GetAsync(CookieName);
+        var culture = ParseCookieValue(cookie?.Value ?? "");
+
+        if (culture == null)
+        {
+            var language =
+                LanguageCodes.List.FirstOrDefault(x => x == CultureInfo.CurrentCulture.TwoLetterISOLanguageName) ??
+                LanguageCodes.Default;
+            culture = GetCultureFromLanguage(language);
+        }
+
+        CultureInfo.CurrentCulture = culture;
+        CultureInfo.CurrentUICulture = culture;
+        CultureInfo.DefaultThreadCurrentCulture = culture;
+        CultureInfo.DefaultThreadCurrentUICulture = culture;
+    }
+
+    public async Task SetCultureCookie(string language)
+    {
+        var culture = GetCultureFromLanguage(language);
+        await cookieService.SetAsync(".AspNetCore.Culture", $"c={culture.Name}|uic={culture.Name}", null);
+    }
+
+    private CultureInfo GetCultureFromLanguage(string language)
     {
         var culture = CultureInfo.GetCultureInfo(language);
 
         if (!string.IsNullOrWhiteSpace(culture.Name) &&
             CultureInfo.GetCultures(CultureTypes.AllCultures).Contains(culture))
         {
-            await cookieService.SetAsync(".AspNetCore.Culture", $"c={culture.Name}|uic={culture.Name}", null);
-        }
-    }
-
-    public async Task SetCultureFromCookie()
-    {
-        var cookie = await cookieService.GetAsync(CookieName);
-        var culture = ParseCookieValue(cookie?.Value ?? "");
-        
-        if (culture == null)
-        {
-            SetDefaultCulture();
-            return;
+            return culture;
         }
 
-        CultureInfo.DefaultThreadCurrentCulture = culture;
-        CultureInfo.DefaultThreadCurrentUICulture = culture;
-    }
-
-    private static void SetDefaultCulture()
-    {
-        var culture = CultureInfo.GetCultureInfo(LanguageCodes.Default);
-        CultureInfo.DefaultThreadCurrentCulture = culture;
-        CultureInfo.DefaultThreadCurrentUICulture = culture;
+        return CultureInfo.CurrentCulture;
     }
 
     private static CultureInfo? ParseCookieValue(string value)

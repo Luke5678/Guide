@@ -4,7 +4,7 @@
 @rendermode InteractiveWebAssembly
 
 @inject NavigationManager NavigationManager
-@inject CultureCookieService CultureCookieService
+@inject LocalizationService LocalizationService
 
 <select class="form-select" @onchange="ChangeLanguage">
     <option value="pl" selected="@("pl" == _language)">Polski</option>
@@ -16,7 +16,7 @@
 
     private async Task ChangeLanguage(ChangeEventArgs e)
     {
-        await CultureCookieService.SetCulture(e.Value?.ToString() ?? LanguageCodes.Default);
+        await LocalizationService.SetCultureCookie(e.Value?.ToString() ?? LanguageCodes.Default);
         NavigationManager.Refresh(true);
     }
 
