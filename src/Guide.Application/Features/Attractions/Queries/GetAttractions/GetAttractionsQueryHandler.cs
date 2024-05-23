@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Guide.Application.Features.Attractions.Queries.GetAttractions;
 
-public class GetAttractionsQueryHandler(GuideDbContext dbContext)
+public class GetAttractionsQueryHandler(IDbContextFactory<GuideDbContext> dbContextFactory)
     : IRequestHandler<GetAttractionsQuery, List<AttractionDto>>
 {
     public async Task<List<AttractionDto>> Handle(
@@ -14,6 +14,7 @@ public class GetAttractionsQueryHandler(GuideDbContext dbContext)
         CancellationToken cancellationToken)
     {
         var lang = request.LanguageCode ?? LanguageCodes.Default;
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
         if (request.Limit is > 100 or < 1)
         {

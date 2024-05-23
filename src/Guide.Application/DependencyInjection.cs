@@ -20,6 +20,7 @@ public static class DependencyInjection
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
         services.AddScoped<IAttractionService, AttractionService>();
+        services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IUploadService, UploadService>();
 
         return services;

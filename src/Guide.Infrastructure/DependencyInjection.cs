@@ -11,7 +11,7 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services
-            .AddDbContext<GuideDbContext>(options =>
+            .AddDbContextFactory<GuideDbContext>(options =>
             {
                 var connectionString = configuration.GetConnectionString("Default")
                                        ?? throw new InvalidOperationException("Connection string not found.");

@@ -2,6 +2,7 @@
 @inherits LayoutComponentBase
 
 @inject IStringLocalizer<SharedResource> Loc
+@inject ICategoryService CategoryService
 
 <HeadContent>
     <link rel="stylesheet" href="css/app.css"/>
@@ -15,27 +16,12 @@
         </button>
         <div class="collapse navbar-collapse" id="navbar">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Zabytki</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Muzea</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Przyroda</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Rozrywka</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Architektura</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Religia</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Dla dzieci</a>
-                </li>
+                @foreach (var category in _categories)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" href="/category/@category.Id">@category.Name</a>
+                    </li>
+                }
             </ul>
             <div class="ms-auto">
                 <LanguageSwitcher/>
@@ -68,3 +54,13 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
+@code {
+    private List<CategoryDto> _categories = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        _categories = await CategoryService.Get();
+    }
+
+}

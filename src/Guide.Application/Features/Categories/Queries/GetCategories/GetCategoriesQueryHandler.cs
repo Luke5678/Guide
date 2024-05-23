@@ -6,12 +6,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Guide.Application.Features.Categories.Queries.GetCategories;
 
-public class GetCategoriesQueryHandler(GuideDbContext dbContext)
+public class GetCategoriesQueryHandler(IDbContextFactory<GuideDbContext> dbContextFactory)
     : IRequestHandler<GetCategoriesQuery, List<CategoryDto>>
 {
     public async Task<List<CategoryDto>> Handle(GetCategoriesQuery request, CancellationToken cancellationToken)
     {
         var lang = request.LanguageCode ?? LanguageCodes.Default;
+        await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
 
         var query = dbContext.Categories
             .Select(x => new CategoryDto
