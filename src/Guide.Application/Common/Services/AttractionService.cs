@@ -19,11 +19,12 @@ public class AttractionService(IMediator mediator) : IAttractionService
     }
 
     public async Task<List<AttractionDto>> Get(int page = 0, int limit = 0, string? orderBy = null,
-        string? search = null)
+        string? search = null, int[]? categories = null)
     {
         return await mediator.Send(new GetAttractionsQuery
         {
             Page = page, Limit = limit, OrderBy = orderBy, Search = search,
+            Categories = categories ?? [],
             LanguageCode = CultureInfo.CurrentCulture.TwoLetterISOLanguageName
         });
     }

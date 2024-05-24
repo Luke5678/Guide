@@ -12,7 +12,7 @@ public class AttractionService(HttpClient httpClient) : IAttractionService
     }
 
     public async Task<List<AttractionDto>> Get(int page = 0, int limit = 0, string? orderBy = null,
-        string? search = null)
+        string? search = null, int[]? categories = null)
     {
         return await httpClient.GetFromJsonAsync<List<AttractionDto>>(
             $"api/attraction/?page={page}&limit={limit}&orderBy={orderBy}&search={search}") ?? [];

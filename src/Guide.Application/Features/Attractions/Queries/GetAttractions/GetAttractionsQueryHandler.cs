@@ -24,17 +24,22 @@ public class GetAttractionsQueryHandler(IDbContextFactory<GuideDbContext> dbCont
         var query = dbContext.Attractions
             .Select(x => new AttractionDto
             {
-                Id = x.Id, Name = x.Translations.First(x => x.LanguageCode == lang).Name,
+                Id = x.Id, Name = x.Translations.First(y => y.LanguageCode == lang).Name,
                 Images = x.Images.Select(y => new AttractionImageDto
                 {
                     Url = y.Url, IsMain = y.IsMain
                 }),
-                Categories = x.Categories.Select(x => new CategoryDto
+                Categories = x.Categories.Select(y => new CategoryDto
                 {
-                    Id = x.Id, Name = x.Translations.First(x => x.LanguageCode == lang).Name
+                    Id = y.Id, Name = y.Translations.First(z => z.LanguageCode == lang).Name
                 })
             })
             .AsNoTracking();
+
+        if (request.Categories.Length > 0)
+        {
+            query = query.Where(x => x.Categories.Any(y => request.Categories.Contains(y.Id)));
+        }
 
         if (!string.IsNullOrEmpty(request.Search))
         {

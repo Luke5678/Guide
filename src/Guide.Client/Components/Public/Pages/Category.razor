@@ -1,0 +1,60 @@
+﻿@page "/category/{id:int}"
+
+@inject ICategoryService CategoryService
+@inject IAttractionService AttractionService
+@inject NavigationManager NavigationManager
+@inject IStringLocalizer<SharedResource> Loc
+
+<PageTitle>Przewodnik Opolskie</PageTitle>
+
+@if (_category != null)
+{
+    <h1>
+        @_category.Name
+    </h1>
+    <div class="row">
+        @foreach (var attraction in _attractions)
+        {
+            <div class="col-md-3 mb-4">
+                <div class="card">
+                    @if (attraction.MainImage != null)
+                    {
+                        <img src="@attraction.MainImage.Url" class="card-img-top" alt="@attraction.Name">
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@attraction.Name</h5>
+                        <p class="card-text">Krótki opis atrakcji.</p>
+                        <a href="/attraction/@attraction.Id" class="btn btn-primary">@Loc["Zobacz więcej"]</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public int? Id { get; set; }
+
+    private CategoryDto? _category;
+    private List<AttractionDto> _attractions = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!Id.HasValue)
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+
+        _category = await CategoryService.GetById(Id.Value);
+
+        if (_category == null)
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+
+        _attractions = await AttractionService.Get(categories: [_category.Id]);
+    }
+
+}

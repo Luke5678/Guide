@@ -10,4 +10,5 @@ public class GetAttractionsQuery : IRequest<List<AttractionDto>>
     public int Limit { get; set; }
     public string? OrderBy { get; set; }
     public string? Search { get; set; }
+    public int[] Categories { get; set; } = [];
 }
