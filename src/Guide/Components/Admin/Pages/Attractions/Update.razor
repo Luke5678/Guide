@@ -11,12 +11,13 @@
 
 @inject IMediator Mediator
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JS
 
 <PageTitle>Atrakcje - Panel Administratora</PageTitle>
 
 <SectionContent SectionName="js">
-    <script src="_content/TinyMCE.Blazor/tinymce-blazor.js"></script>
     <script src="js/tinyMceConf.js"></script>
+    <script src="_content/TinyMCE.Blazor/tinymce-blazor.js"></script>
 </SectionContent>
 
 @if (_request != null)
@@ -45,10 +46,13 @@
         </div>
         <div class="mb-3">
             <label class="form-label">Opis</label>
-            <Editor Field="() => _request.Description"
-                    @bind-Value="_request.Description"
-                    ScriptSrc="/js/tinymce/tinymce.min.js"
-                    JsConfSrc="tinyMceConf"/>
+            @if (_isTinyMceAvailable)
+            {
+                <Editor Field="() => _request.Description"
+                        @bind-Value="_request.Description"
+                        ScriptSrc="/js/tinymce/tinymce.min.js"
+                        JsConfSrc="tinyMceConf"/>
+            }
         </div>
         <button type="submit" class="btn btn-primary">Zapisz</button>
     </EditForm>
@@ -107,6 +111,7 @@
     private List<CategoryDto> _categories = [];
     private List<AttractionImageDto> _images = [];
     private bool _isProcessingFiles;
+    private bool _isTinyMceAvailable;
 
     protected override async Task OnInitializedAsync()
     {
@@ -133,6 +138,28 @@
             Categories = attraction.Categories.Select(x => x.Id),
             LanguageCode = _language
         };
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                _isTinyMceAvailable = await JS.InvokeAsync<bool>("isTinyMceAvailable");
+            }
+            catch (JSException)
+            {
+            }
+            catch (InvalidOperationException)
+            {
+            }
+
+            if (!_isTinyMceAvailable)
+            {
+                NavigationManager.Refresh(true);
+            }
+        }
     }
 
     private async Task HandleSubmit()

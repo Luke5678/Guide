@@ -39,3 +39,7 @@
         xhr.send(formData);
     })
 };
+
+window.isTinyMceAvailable = function () {
+    return window.tinymceBlazorWrapper !== undefined;
+};
