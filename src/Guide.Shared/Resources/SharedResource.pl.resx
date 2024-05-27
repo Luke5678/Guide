@@ -32,4 +32,10 @@
     <data name="Zobacz więcej" xml:space="preserve">
         <value>Zobacz więcej</value>
     </data>
+    <data name="Galeria" xml:space="preserve">
+        <value>Galeria</value>
+    </data>
+    <data name="Zamknij" xml:space="preserve">
+        <value>Zamknij</value>
+    </data>
 </root>

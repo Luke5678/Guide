@@ -84,4 +84,10 @@
     <data name="Zobacz więcej" xml:space="preserve">
         <value>See more</value>
     </data>
+    <data name="Galeria" xml:space="preserve">
+        <value>Gallery</value>
+    </data>
+    <data name="Zamknij" xml:space="preserve">
+        <value>Close</value>
+    </data>
 </root>

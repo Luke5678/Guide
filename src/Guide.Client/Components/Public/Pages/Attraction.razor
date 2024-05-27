@@ -10,9 +10,10 @@
     <h1>
         @_attraction.Name
     </h1>
-    <div>
-        @((MarkupString)_attraction.Description)
+    <div class="mb-5">
+	    @((MarkupString)_attraction.Description)
     </div>
+    <ImageGallery Images="_attraction.Images.ToList()" />
 }
 
 @code {
