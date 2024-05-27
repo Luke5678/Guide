@@ -38,4 +38,22 @@
     <data name="Zamknij" xml:space="preserve">
         <value>Zamknij</value>
     </data>
+    <data name="Komentarze" xml:space="preserve">
+        <value>Komentarze</value>
+    </data>
+    <data name="Nowy komentarz" xml:space="preserve">
+        <value>Nowy komentarz</value>
+    </data>
+    <data name="Napisz komentarz" xml:space="preserve">
+        <value>Napisz komentarz</value>
+    </data>
+    <data name="Twój komentarz..." xml:space="preserve">
+        <value>Twój komentarz...</value>
+    </data>
+    <data name="Komentarz" xml:space="preserve">
+        <value>Komentarz</value>
+    </data>
+    <data name="Komentarzy" xml:space="preserve">
+        <value>Komentarzy</value>
+    </data>
 </root>

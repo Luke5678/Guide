@@ -1,5 +1,7 @@
 ﻿@page "/attraction/{id:int}"
 
+@using Guide.Client.Components.Public.Shared.Attraction
+
 @inject IAttractionService AttractionService
 @inject NavigationManager NavigationManager
 
@@ -11,9 +13,9 @@
         @_attraction.Name
     </h1>
     <div class="mb-5">
-	    @((MarkupString)_attraction.Description)
+        @((MarkupString)_attraction.Description)
     </div>
-    <ImageGallery Images="_attraction.Images.ToList()" />
+    <Tabs Attraction="_attraction"/>
 }
 
 @code {

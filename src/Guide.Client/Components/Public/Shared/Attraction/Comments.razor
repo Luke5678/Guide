@@ -1,0 +1,56 @@
+﻿@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+@inject IStringLocalizer<SharedResource> Loc
+
+<div class="row mb-5">
+    <form class="col">
+        <div class="d-flex justify-content-between gap-3 mb-2">
+            <h4>@Loc["Nowy komentarz"]</h4>
+            <button type="submit" class="btn btn-primary">@Loc["Napisz komentarz"]</button>
+        </div>
+        <div class="form-group">
+            <textarea class="form-control" placeholder="@Loc["Twój komentarz..."]"></textarea>
+        </div>
+    </form>
+</div>
+
+<h3>@PluralizedCommentsHeader</h3>
+<hr/>
+
+@for (var i = 0; i < _commentsAmount; i++)
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5>
+                <i class="bi bi-person-circle"></i>
+                <span>Jan Kowalski</span>
+            </h5>
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <i class="bi bi-calendar-event"></i>
+                    <span>27.05.2024 21:00</span>
+                </div>
+                <div>
+                    <i class="bi bi-hand-thumbs-up"></i>
+                    <span>5</span>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public AttractionDto? Attraction { get; set; }
+    private int _commentsAmount = 3;
+
+    private string PluralizedCommentsHeader => _commentsAmount switch
+    {
+        1 => $"{_commentsAmount} {@Loc["Komentarz"]}",
+        < 5 => $"{_commentsAmount} {@Loc["Komentarze"]}",
+        _ => $"{_commentsAmount} {@Loc["Komentarzy"]}"
+    };
+
+}

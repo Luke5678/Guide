@@ -1,13 +1,11 @@
-﻿@inject IStringLocalizer<SharedResource> Loc
+﻿@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 
-@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
-
-<h2>@Loc["Galeria"]</h2>
+@inject IStringLocalizer<SharedResource> Loc
 
 <div class="row align-items-center row-gap-3">
     @foreach (var image in Images)
     {
-        <div class="col-sm-2" style="cursor:pointer;" data-bs-toggle="modal" data-bs-target="#galleryModal" @onclick="() => OnImageSelected(image)">
+        <div class="col-sm-4 col-md-2" style="cursor:pointer;" data-bs-toggle="modal" data-bs-target="#galleryModal" @onclick="() => OnImageSelected(image)">
             <img src="@image.Url" class="img-fluid img-thumbnail" alt="@image.Url">
         </div>
     }

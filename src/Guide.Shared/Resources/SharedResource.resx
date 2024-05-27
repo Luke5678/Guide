@@ -90,4 +90,22 @@
     <data name="Zamknij" xml:space="preserve">
         <value>Close</value>
     </data>
+    <data name="Komentarze" xml:space="preserve">
+        <value>Comments</value>
+    </data>
+    <data name="Nowy komentarz" xml:space="preserve">
+        <value>New comment</value>
+    </data>
+    <data name="Napisz komentarz" xml:space="preserve">
+        <value>Submit comment</value>
+    </data>
+    <data name="Twój komentarz..." xml:space="preserve">
+        <value>Your comment</value>
+    </data>
+    <data name="Komentarz" xml:space="preserve">
+        <value>Comment</value>
+    </data>
+    <data name="Komentarzy" xml:space="preserve">
+        <value>Comments</value>
+    </data>
 </root>

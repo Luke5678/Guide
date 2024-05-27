@@ -1,4 +1,5 @@
 using BitzArt.Blazor.Cookies;
+using Blazored.LocalStorage;
 using Guide.Client.Common.Authorization;
 using Guide.Client.Common.Services;
 using Guide.Shared.Common.Interfaces;
@@ -20,6 +21,7 @@ builder.Services.AddLocalization();
 builder.Services.AddScoped<ICookieService, BrowserCookieService>();
 builder.Services.AddScoped<LocalizationService>();
 builder.Services.AddScoped<IAttractionService, AttractionService>();
+builder.Services.AddBlazoredLocalStorage();
 
 var app = builder.Build();
 

@@ -1,0 +1,48 @@
+﻿@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject IStringLocalizer<SharedResource> Loc
+
+@if (Attraction != null)
+{
+    <ul class="nav nav-tabs mb-3" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link @(_activeTab == "gallery" ? "active" : "")" id="gallery-tab" data-bs-toggle="tab" data-bs-target="#gallery-tab-pane" type="button" role="tab"
+                    @onclick="@(async () => await SetActiveTabAsync("gallery"))">
+                @Loc["Galeria"]
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link @(_activeTab == "comments" ? "active" : "")" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments-tab-pane" type="button" role="tab"
+                    @onclick="@(async () => await SetActiveTabAsync("comments"))">
+                @Loc["Komentarze"]
+            </button>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane fade @(_activeTab == "gallery" ? "show active" : "")" id="gallery-tab-pane" role="tabpanel" tabindex="0">
+            <Gallery Images="Attraction.Images.ToList()"/>
+        </div>
+        <div class="tab-pane fade @(_activeTab == "comments" ? "show active" : "")" id="comments-tab-pane" role="tabpanel" tabindex="0">
+            <Comments Attraction="Attraction"/>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public AttractionDto? Attraction { get; set; }
+
+    private const string ActiveTabKey = "attraction_active_tab";
+    private string _activeTab = "gallery";
+
+    protected override async Task OnInitializedAsync()
+    {
+        _activeTab = await LocalStorage.GetItemAsync<string>(ActiveTabKey) ?? _activeTab;
+    }
+
+    private async Task SetActiveTabAsync(string tab)
+    {
+        await LocalStorage.SetItemAsync(ActiveTabKey, tab);
+    }
+
+}
