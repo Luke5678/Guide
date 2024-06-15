@@ -1,0 +1,192 @@
+﻿@page "/admin/users"
+@rendermode InteractiveServer
+@using Guide.Application.Features.Users.Commands
+@using Guide.Application.Features.Users.Queries
+
+@inject IMediator Mediator
+@inject NavigationManager NavigationManager
+
+<PageTitle>Użytkownicy - Panel Administratora</PageTitle>
+
+<div class="row mb-4 mb-md-0">
+    <div class="d-flex">
+        <a class="btn btn-primary" href="admin/users/create">
+            Nowy użytkownik
+        </a>
+    </div>
+</div>
+
+<div class="row align-items-end mb-3">
+    <div class="col-12 col-md mb-3 mb-md-0">
+        <div class="d-flex" style="max-width: 550px">
+            <input class="form-control me-2" type="search" placeholder="Szukaj" @bind="_searchInput">
+            <button class="btn btn-success" type="submit" @onclick="ChangeSearch">Szukaj</button>
+        </div>
+    </div>
+    <div class="col-12 col-md-2">
+        <label class="form-label">Ilość wierszy</label>
+        <select class="form-select" @onchange="ChangeLimit">
+            @foreach (var limit in _limits)
+            {
+                <option value="@limit" selected="@(limit == Limit)">@limit</option>
+            }
+        </select>
+    </div>
+</div>
+
+@if (Users == null)
+{
+    <div class="row">...</div>
+}
+else
+{
+    <div class="row">
+        <div class="table-responsive">
+            <table class="table align-middle table-striped table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th @onclick="@(async () => await ChangeOrder("id"))">
+                        Id
+                    </th>
+                    <th @onclick="@(async () => await ChangeOrder("name"))">
+                        Nazwa użytkownika
+                    </th>
+                    <th @onclick="@(async () => await ChangeOrder("email"))">
+                        Adres email
+                    </th>
+                    <th/>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var user in Users)
+                {
+                    <tr>
+                        <td>@user.Id</td>
+                        <td>@user.UserName</td>
+                        <td>@user.Email</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary" @onclick="() => Edit(user)">
+                                    Edytuj
+                                </button>
+                                <button class="btn btn-danger" @onclick="() => Delete(user)">
+                                    Usuń
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+
+        <TablePagination CurrentPage="Page" PagesAmount="PagesAmount" OnPageChanged="async page => await ChangePage(page)"/>
+    </div>
+}
+
+@code {
+    [Parameter] [SupplyParameterFromQuery] public int Page { get; set; }
+    [Parameter] [SupplyParameterFromQuery] public int Limit { get; set; }
+    [Parameter] [SupplyParameterFromQuery] public string? OrderBy { get; set; }
+    [Parameter] [SupplyParameterFromQuery] public string? Search { get; set; }
+
+    private List<User>? Users { get; set; }
+    private int PagesAmount { get; set; }
+
+    private string? _searchInput;
+    readonly int[] _limits = [5, 10, 15, 20, 30];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUsers();
+        _searchInput = Search;
+    }
+
+    async Task LoadUsers()
+    {
+        if (Limit < 5) Limit = 10;
+        else if (Limit > 50) Limit = 50;
+
+        var count = await Mediator.Send(new CountUsersQuery { Search = Search });
+        PagesAmount = (int)Math.Ceiling(count / (double)Limit);
+
+        if (Page < 1) Page = 1;
+        else if (Page > PagesAmount) Page = PagesAmount;
+
+        Users = await Mediator.Send(new GetUsersQuery
+        {
+            Page = Page, Limit = Limit, OrderBy = OrderBy, Search = Search
+        });
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    void Edit(User user)
+    {
+        NavigationManager.NavigateTo($"/admin/users/update/{user.Id}");
+    }
+
+    async Task Delete(User user)
+    {
+        await Mediator.Send(new DeleteUserCommand() { Id = user.Id });
+        await LoadUsers();
+    }
+
+    async Task ChangePage(int? newPage = null)
+    {
+        Page = newPage ?? Page;
+
+        var uri = new Uri(NavigationManager.Uri);
+        var query = HttpUtility.ParseQueryString(uri.Query);
+
+        query["page"] = Page.ToString();
+        query["limit"] = Limit.ToString();
+        query["orderBy"] = OrderBy;
+        query["search"] = Search;
+
+        if (string.IsNullOrWhiteSpace(OrderBy))
+        {
+            query.Remove("orderBy");
+        }
+
+        if (string.IsNullOrWhiteSpace(Search))
+        {
+            query.Remove("search");
+        }
+
+        var uriBuilder = new UriBuilder(uri) { Query = query.ToString() };
+
+        await LoadUsers();
+        NavigationManager.NavigateTo(uriBuilder.Uri.ToString());
+    }
+
+    async Task ChangeOrder(string column)
+    {
+        var rg = new Regex($"^{column} (asc|desc)$", RegexOptions.IgnoreCase);
+
+        if (string.IsNullOrEmpty(OrderBy) || !rg.IsMatch(OrderBy))
+        {
+            OrderBy = $"{column} asc";
+        }
+        else
+        {
+            var dir = OrderBy.Split(" ")[1];
+            OrderBy = dir.ToLower() == "asc" ? $"{column} desc" : $"{column} asc";
+        }
+
+        await ChangePage();
+    }
+
+    async Task ChangeSearch()
+    {
+        Search = _searchInput;
+        await ChangePage();
+    }
+
+    async Task ChangeLimit(ChangeEventArgs e)
+    {
+        Limit = Convert.ToInt32(e.Value?.ToString());
+        await ChangePage();
+    }
+
+}

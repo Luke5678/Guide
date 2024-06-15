@@ -22,12 +22,15 @@ public static class Extensions
         using var scope = app.ApplicationServices.CreateScope();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-        var role = roleManager.FindByNameAsync(UserRoles.Administrator).GetAwaiter().GetResult();
-        if (role == null)
+        foreach (var roleName in UserRoles.List)
         {
-            roleManager.CreateAsync(new IdentityRole(UserRoles.Administrator)).Wait();
+            var role = roleManager.FindByNameAsync(roleName).GetAwaiter().GetResult();
+            if (role == null)
+            {
+                roleManager.CreateAsync(new IdentityRole(roleName)).Wait();
+            }
         }
-    
+        
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
 
         if (userManager.Users.Any()) return;

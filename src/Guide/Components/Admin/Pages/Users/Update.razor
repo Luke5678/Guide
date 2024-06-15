@@ -1,0 +1,164 @@
+﻿@page "/admin/users/update/{*id}"
+@rendermode InteractiveServer
+
+@inject UserManager<User> UserManager
+@inject NavigationManager NavigationManager
+
+<PageTitle>Użytkownicy - Panel Administratora</PageTitle>
+
+@if (_input != null)
+{
+    @if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @_errorMessage
+        </div>
+    }
+
+    <EditForm Model="_input" OnValidSubmit="HandleSubmit">
+        <FluentValidationValidator/>
+        <div class="mb-3">
+            <label class="form-label">Nazwa użytkownika</label>
+            <InputText class="form-control" @bind-Value="_input.UserName">@_input.UserName</InputText>
+            <ValidationMessage For="() => _input.UserName"/>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Adres email</label>
+            <InputText class="form-control" @bind-Value="_input.Email">@_input.Email</InputText>
+            <ValidationMessage For="() => _input.Email"/>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Hasło</label>
+            <InputText class="form-control" @bind-Value="_input.Password">@_input.UserName</InputText>
+            <ValidationMessage For="() => _input.Password"/>
+        </div>
+        <div class="form-check mb-3">
+            <InputCheckbox @bind-Value="_input.IsAdmin" class="form-check-input" id="form-is-admin"/>
+            <label class="form-check-label" for="form-is-admin">
+                Konto administratora
+            </label>
+        </div>
+        <button type="submit" class="btn btn-primary">Zapisz</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public string? Id { get; set; }
+
+    private User? _user;
+    private InputModel? _input;
+    private string? _errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (string.IsNullOrEmpty(Id))
+        {
+            NavigationManager.NavigateTo("/admin/users");
+            return;
+        }
+
+        var user = await UserManager.FindByIdAsync(Id);
+        if (user == null)
+        {
+            NavigationManager.NavigateTo("/admin/users");
+            return;
+        }
+
+        var isMainAdmin = await UserManager.IsInRoleAsync(user, UserRoles.MainAdministrator);
+        if (isMainAdmin)
+        {
+            NavigationManager.NavigateTo("/admin/users");
+            return;
+        }
+
+        var isAdmin = await UserManager.IsInRoleAsync(user, UserRoles.Administrator);
+
+        _user = user;
+        _input = new InputModel
+        {
+            UserName = user.UserName ?? "",
+            Email = user.Email ?? "",
+            IsAdmin = isAdmin
+        };
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (_input!.UserName != _user!.UserName)
+        {
+            var result = await UserManager.SetUserNameAsync(_user, _input.UserName);
+            if (!result.Succeeded)
+            {
+                _errorMessage = $"Błąd: {string.Join(", ", result.Errors.Select(error => error.Description))}";
+                return;
+            }
+        }
+
+        if (_input.Email != _user.Email)
+        {
+            var result = await UserManager.SetEmailAsync(_user, _input.Email);
+            if (!result.Succeeded)
+            {
+                _errorMessage = $"Błąd: {string.Join(", ", result.Errors.Select(error => error.Description))}";
+                return;
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(_input.Password))
+        {
+            var token = await UserManager.GeneratePasswordResetTokenAsync(_user);
+            var result = await UserManager.ResetPasswordAsync(_user, token, _input.Password);
+            if (!result.Succeeded)
+            {
+                _errorMessage = $"Błąd: {string.Join(", ", result.Errors.Select(error => error.Description))}";
+                return;
+            }
+        }
+
+        var isAdmin = await UserManager.IsInRoleAsync(_user, UserRoles.Administrator);
+        if (_input.IsAdmin != isAdmin)
+        {
+            if (_input.IsAdmin)
+            {
+                var result = await UserManager.AddToRoleAsync(_user, UserRoles.Administrator);
+                if (!result.Succeeded)
+                {
+                    _errorMessage = $"Błąd: {string.Join(", ", result.Errors.Select(error => error.Description))}";
+                    return;
+                }
+            }
+            else
+            {
+                var result = await UserManager.RemoveFromRoleAsync(_user, UserRoles.Administrator);
+                if (!result.Succeeded)
+                {
+                    _errorMessage = $"Błąd: {string.Join(", ", result.Errors.Select(error => error.Description))}";
+                    return;
+                }
+            }
+        }
+
+        NavigationManager.NavigateTo("/admin/users");
+    }
+
+    private sealed class InputModel
+    {
+        [Required]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 3)]
+        [Display(Name = "UserName")]
+        public string UserName { get; set; } = "";
+
+        [Required]
+        [EmailAddress]
+        [Display(Name = "Email")]
+        public string Email { get; set; } = "";
+
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "Password")]
+        public string Password { get; set; } = "";
+
+        public bool IsAdmin { get; set; }
+    }
+
+}

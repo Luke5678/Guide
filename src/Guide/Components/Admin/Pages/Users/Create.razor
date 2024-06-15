@@ -1,0 +1,90 @@
+﻿@page "/admin/users/create"
+@rendermode InteractiveServer
+
+@inject UserManager<User> UserManager
+@inject NavigationManager NavigationManager
+
+<PageTitle>Użytkownicy - Panel Administratora</PageTitle>
+
+@if (!string.IsNullOrEmpty(_errorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        @_errorMessage
+    </div>
+}
+
+<EditForm Model="_input" OnValidSubmit="HandleSubmit" class="mt-4">
+    <FluentValidationValidator/>
+    <div class="mb-3">
+        <label class="form-label">Nazwa użytkownika</label>
+        <InputText class="form-control" @bind-Value="_input.UserName">@_input.UserName</InputText>
+        <ValidationMessage For="() => _input.UserName"/>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Adres email</label>
+        <InputText class="form-control" @bind-Value="_input.Email">@_input.Email</InputText>
+        <ValidationMessage For="() => _input.Email"/>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Hasło</label>
+        <InputText class="form-control" @bind-Value="_input.Password">@_input.UserName</InputText>
+        <ValidationMessage For="() => _input.Password"/>
+    </div>
+    <div class="form-check mb-3">
+        <InputCheckbox @bind-Value="_input.IsAdmin" class="form-check-input" id="form-is-admin"/>
+        <label class="form-check-label" for="form-is-admin">
+            Konto administratora
+        </label>
+    </div>
+    <button type="submit" class="btn btn-primary">Stwórz użytkownika</button>
+</EditForm>
+
+@code {
+    private readonly InputModel _input = new();
+    private string? _errorMessage;
+
+    async Task HandleSubmit()
+    {
+        var user = new User
+        {
+            UserName = _input.UserName, Email = _input.Email
+        };
+
+        var result = await UserManager.CreateAsync(user, _input.Password);
+
+        if (!result.Succeeded)
+        {
+            _errorMessage = $"Błąd: {string.Join(", ", result.Errors.Select(error => error.Description))}";
+            return;
+        }
+
+        if (_input.IsAdmin)
+        {
+            await UserManager.AddToRoleAsync(user, UserRoles.Administrator);
+        }
+
+        NavigationManager.NavigateTo("/admin/users");
+    }
+
+    private sealed class InputModel
+    {
+        [Required]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 3)]
+        [Display(Name = "UserName")]
+        public string UserName { get; set; } = "";
+
+        [Required]
+        [EmailAddress]
+        [Display(Name = "Email")]
+        public string Email { get; set; } = "";
+
+        [Required]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "Password")]
+        public string Password { get; set; } = "";
+
+        public bool IsAdmin { get; set; }
+    }
+
+}
