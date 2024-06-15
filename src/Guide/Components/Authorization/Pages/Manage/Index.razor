@@ -1,4 +1,4 @@
-﻿@page "/Account/Manage"
+﻿@page "/account/manage"
 
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Identity
@@ -9,10 +9,11 @@
 @inject SignInManager<User> SignInManager
 @inject IdentityUserAccessor UserAccessor
 @inject IdentityRedirectManager RedirectManager
+@inject IStringLocalizer<SharedResource> Loc
 
-<PageTitle>Profile</PageTitle>
+<PageTitle>@Loc["Profil"]</PageTitle>
 
-<h3>Profile</h3>
+<h3>@Loc["Profil"]</h3>
 <StatusMessage/>
 
 <div class="row">
@@ -21,23 +22,18 @@
             <DataAnnotationsValidator/>
             <ValidationSummary class="text-danger" role="alert"/>
             <div class="form-floating mb-3">
-                <input type="text" value="@username" class="form-control" placeholder="Please choose your username." disabled/>
-                <label for="username" class="form-label">Username</label>
+                <InputText @bind-Value="Input.Username" class="form-control" placeholder="Please choose your username."/>
+                <label for="username" class="form-label">@Loc["Nazwa użytkownika"]</label>
+                <ValidationMessage For="() => Input.Username" class="text-danger"/>
             </div>
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.PhoneNumber" class="form-control" placeholder="Please enter your phone number."/>
-                <label for="phone-number" class="form-label">Phone number</label>
-                <ValidationMessage For="() => Input.PhoneNumber" class="text-danger"/>
-            </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">@Loc["Zapisz"]</button>
         </EditForm>
     </div>
 </div>
 
 @code {
-    private User user = default!;
-    private string? username;
-    private string? phoneNumber;
+    private User _user = default!;
+    private string? _username;
 
     [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
 
@@ -45,33 +41,30 @@
 
     protected override async Task OnInitializedAsync()
     {
-        user = await UserAccessor.GetRequiredUserAsync(HttpContext);
-        username = await UserManager.GetUserNameAsync(user);
-        phoneNumber = await UserManager.GetPhoneNumberAsync(user);
+        _user = await UserAccessor.GetRequiredUserAsync(HttpContext);
+        _username = await UserManager.GetUserNameAsync(_user);
 
-        Input.PhoneNumber ??= phoneNumber;
+        Input.Username ??= _username;
     }
 
     private async Task OnValidSubmitAsync()
     {
-        if (Input.PhoneNumber != phoneNumber)
+        if (Input.Username != _username)
         {
-            var setPhoneResult = await UserManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
-            if (!setPhoneResult.Succeeded)
+            var setUsernameResult = await UserManager.SetUserNameAsync(_user, Input.Username);
+            if (!setUsernameResult.Succeeded)
             {
-                RedirectManager.RedirectToCurrentPageWithStatus("Error: Failed to set phone number.", HttpContext);
+                RedirectManager.RedirectToCurrentPageWithStatus(@Loc["Wystąpił błąd. Nazwa użytkownika nie została zmieniona."], HttpContext);
             }
         }
 
-        await SignInManager.RefreshSignInAsync(user);
-        RedirectManager.RedirectToCurrentPageWithStatus("Your profile has been updated", HttpContext);
+        await SignInManager.RefreshSignInAsync(_user);
+        RedirectManager.RedirectToCurrentPageWithStatus(@Loc["Twój profil został zaktualizowany"], HttpContext);
     }
 
     private sealed class InputModel
     {
-        [Phone]
-        [Display(Name = "Phone number")]
-        public string? PhoneNumber { get; set; }
+        [Display(Name = "Username")] public string? Username { get; set; }
     }
 
 }

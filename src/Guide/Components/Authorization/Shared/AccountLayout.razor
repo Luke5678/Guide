@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@layout Guide.Client.Components.Public.Shared.PublicLayout
 
 @inject NavigationManager NavigationManager
 
@@ -8,9 +9,7 @@
 }
 else
 {
-    <main class="container d-flex flex-column justify-content-center vh-100">
-        @Body
-    </main>
+    @Body
 }
 
 @code {

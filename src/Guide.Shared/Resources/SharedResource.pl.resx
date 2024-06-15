@@ -56,4 +56,112 @@
     <data name="Komentarzy" xml:space="preserve">
         <value>Komentarzy</value>
     </data>
+    <data name="Logowanie" xml:space="preserve">
+        <value>Logowanie</value>
+    </data>
+    <data name="Pamiętaj mnie" xml:space="preserve">
+        <value>Pamiętaj mnie</value>
+    </data>
+    <data name="Email" xml:space="preserve">
+        <value>Email</value>
+    </data>
+    <data name="Hasło" xml:space="preserve">
+        <value>Hasło</value>
+    </data>
+    <data name="Przypomnij hasło" xml:space="preserve">
+        <value>Przypomnij hasło</value>
+    </data>
+    <data name="Zaloguj się" xml:space="preserve">
+        <value>Zaloguj się</value>
+    </data>
+    <data name="Błąd: Nieudana próba logowania." xml:space="preserve">
+        <value>Błąd: Nieudana próba logowania.</value>
+    </data>
+    <data name="Rejestracja" xml:space="preserve">
+        <value>Rejestracja</value>
+    </data>
+    <data name="Tworzenie nowego konta." xml:space="preserve">
+        <value>Tworzenie nowego konta.</value>
+    </data>
+    <data name="Nazwa użytkownika" xml:space="preserve">
+        <value>Nazwa użytkownika</value>
+    </data>
+    <data name="Powtórz Hasło" xml:space="preserve">
+        <value>Powtórz Hasło</value>
+    </data>
+    <data name="Zarejestruj" xml:space="preserve">
+        <value>Zarejestruj</value>
+    </data>
+    <data name="Powrót do logowania" xml:space="preserve">
+        <value>Powrót do logowania</value>
+    </data>
+    <data name="Resetowanie hasła" xml:space="preserve">
+        <value>Resetowanie hasła</value>
+    </data>
+    <data name="Na podany adres email zostanie wysłany link do resetowania hasła." xml:space="preserve">
+        <value>Na podany adres email zostanie wysłany link do resetowania hasła.</value>
+    </data>
+    <data name="Wyślij link" xml:space="preserve">
+        <value>Wyślij link</value>
+    </data>
+    <data name="Kliknij w link wysłany na twój adres email aby kontynuować." xml:space="preserve">
+        <value>Kliknij w link wysłany na twój adres email aby kontynuować.</value>
+    </data>
+    <data name="Nieprawidłowe resetowanie hasła" xml:space="preserve">
+        <value>Nieprawidłowe resetowanie hasła</value>
+    </data>
+    <data name="Link do resetowania hasła jest nieprawidłowy." xml:space="preserve">
+        <value>Link do resetowania hasła jest nieprawidłowy.</value>
+    </data>
+    <data name="Zatwierdź" xml:space="preserve">
+        <value>Zatwierdź</value>
+    </data>
+    <data name="Potwierdzenie resetowania hasła" xml:space="preserve">
+        <value>Potwierdzenie resetowania hasła</value>
+    </data>
+    <data name="Twoje hasło zostało zresetowane." xml:space="preserve">
+        <value>Twoje hasło zostało zresetowane.</value>
+    </data>
+    <data name="Zarządzanie kontem" xml:space="preserve">
+        <value>Zarządzanie kontem</value>
+    </data>
+    <data name="Profil" xml:space="preserve">
+        <value>Profil</value>
+    </data>
+    <data name="Twój profil został zaktualizowany" xml:space="preserve">
+        <value>Twój profil został zaktualizowany</value>
+    </data>
+    <data name="Zapisz" xml:space="preserve">
+        <value>Zapisz</value>
+    </data>
+    <data name="Wystąpił błąd. Nazwa użytkownika nie została zmieniona." xml:space="preserve">
+        <value>Wystąpił błąd. Nazwa użytkownika nie została zmieniona.</value>
+    </data>
+    <data name="Zarządzanie adresem email" xml:space="preserve">
+        <value>Zarządzanie adresem email</value>
+    </data>
+    <data name="Zmień email" xml:space="preserve">
+        <value>Zmień email</value>
+    </data>
+    <data name="Nowy email" xml:space="preserve">
+        <value>Nowy email</value>
+    </data>
+    <data name="Twój adres email się nie zmienił." xml:space="preserve">
+        <value>Twój adres email się nie zmienił.</value>
+    </data>
+    <data name="Na twoją skrzynkę został wysłany link potwierdzający zmianę adresu email." xml:space="preserve">
+        <value>Na twoją skrzynkę został wysłany link potwierdzający zmianę adresu email.</value>
+    </data>
+    <data name="Zmiana hasła" xml:space="preserve">
+        <value>Zmiana hasła</value>
+    </data>
+    <data name="Stare hasło" xml:space="preserve">
+        <value>Stare hasło</value>
+    </data>
+    <data name="Nowe hasło" xml:space="preserve">
+        <value>Nowe hasło</value>
+    </data>
+    <data name="Potwierdź hasło" xml:space="preserve">
+        <value>Potwierdź hasło</value>
+    </data>
 </root>

@@ -9,37 +9,41 @@
 @inject SignInManager<User> SignInManager
 @inject ILogger<Login> Logger
 @inject IdentityRedirectManager RedirectManager
+@inject IStringLocalizer<SharedResource> Loc
 
-<PageTitle>Logowanie - Panel Administratora</PageTitle>
+<PageTitle>@Loc["Logowanie"]</PageTitle>
 
 <div class="row justify-content-center">
     <div style="max-width: 400px;">
         <StatusMessage Message="@errorMessage"/>
         <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
             <DataAnnotationsValidator/>
-            <h1 class="fs-2">Logowanie</h1>
+            <h1 class="fs-2">@Loc["Logowanie"]</h1>
             <hr/>
             <div class="form-floating mb-3">
                 <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" placeholder="nazwa@example.com"/>
-                <label for="email" class="form-label">Email</label>
+                <label for="email" class="form-label">@Loc["Email"]</label>
                 <ValidationMessage For="() => Input.Email" class="text-danger"/>
             </div>
             <div class="form-floating mb-3">
                 <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="current-password" placeholder="hasło"/>
-                <label for="password" class="form-label">Hasło</label>
+                <label for="password" class="form-label">@Loc["Hasło"]</label>
                 <ValidationMessage For="() => Input.Password" class="text-danger"/>
             </div>
             <div class="checkbox mb-3">
                 <label class="form-label">
                     <InputCheckbox @bind-Value="Input.RememberMe" class="darker-border-checkbox form-check-input"/>
-                    Pamiętaj mnie
+                    @Loc["Pamiętaj mnie"]
                 </label>
             </div>
             <div class="mb-3">
-                <button type="submit" class="w-100 btn btn-lg btn-primary">Zaloguj się</button>
+                <button type="submit" class="w-100 btn btn-lg btn-primary">@Loc["Zaloguj się"]</button>
+            </div>
+            <div class="mb-2">
+                <a href="account/forgot-password">@Loc["Przypomnij hasło"]</a>
             </div>
             <div>
-                <a href="account/forgot-password">Przypomnij hasło</a>
+                <a href="account/register">@Loc["Rejestracja"]</a>
             </div>
         </EditForm>
     </div>
@@ -69,11 +73,11 @@
         if (result.Succeeded)
         {
             Logger.LogInformation("User logged in.");
-            RedirectManager.RedirectTo(ReturnUrl ?? "/admin");
+            RedirectManager.RedirectTo(ReturnUrl ?? "/");
         }
         else
         {
-            errorMessage = "Błąd: Nieudana próba logowania.";
+            errorMessage = @Loc["Błąd: Nieudana próba logowania."];
         }
     }
 
