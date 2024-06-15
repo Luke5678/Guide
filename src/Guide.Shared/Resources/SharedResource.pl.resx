@@ -164,4 +164,16 @@
     <data name="Potwierdź hasło" xml:space="preserve">
         <value>Potwierdź hasło</value>
     </data>
+    <data name="Moje konto" xml:space="preserve">
+        <value>Moje konto</value>
+    </data>
+    <data name="Wyloguj się" xml:space="preserve">
+        <value>Wyloguj się</value>
+    </data>
+    <data name="Brak dostępu" xml:space="preserve">
+        <value>Brak dostępu</value>
+    </data>
+    <data name="Nie masz dostępu do tego zasobu." xml:space="preserve">
+        <value>Nie masz dostępu do tego zasobu.</value>
+    </data>
 </root>

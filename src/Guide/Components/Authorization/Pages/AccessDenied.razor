@@ -1,8 +1,10 @@
-﻿@page "/Account/AccessDenied"
+﻿@page "/account/access-denied"
 
-<PageTitle>Access denied</PageTitle>
+@inject IStringLocalizer<SharedResource> Loc
+
+<PageTitle>@Loc["Brak dostępu"]</PageTitle>
 
 <header>
-    <h1 class="text-danger">Access denied</h1>
-    <p class="text-danger">You do not have access to this resource.</p>
+    <h1 class="text-danger">@Loc["Brak dostępu"]</h1>
+    <p class="text-danger">@Loc["Nie masz dostępu do tego zasobu."]</p>
 </header>

@@ -44,10 +44,16 @@ try
         })
         .AddIdentityCookies();
 
+    builder.Services.ConfigureApplicationCookie(o =>
+    {
+        o.AccessDeniedPath = "/account/access-denied";
+    });
+
     builder.Services.AddInfrastructure(builder.Configuration);
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
-    builder.Services.AddIdentityCore<User>(options => options.SignIn.RequireConfirmedAccount = true)
+    
+    builder.Services.AddIdentityCore<User>()
+        .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<GuideDbContext>()
         .AddSignInManager()
         .AddDefaultTokenProviders();
@@ -76,7 +82,7 @@ try
     var app = builder.Build();
 
     app.ApplyMigration();
-    app.CreateDefaultUser();
+    app.SeedDatabase();
 
     app.UseDefaultFiles();
     app.UseStaticFiles();

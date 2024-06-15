@@ -41,6 +41,11 @@
                             <li>
                                 <a class="dropdown-item" href="/account/manage">@Loc["Moje konto"]</a>
                             </li>
+                            <AuthorizeView Context="admin" Roles="@(UserRoles.Administrator)">
+                                <li>
+                                    <a class="dropdown-item" href="/admin">@Loc["Panel admina"]</a>
+                                </li>
+                            </AuthorizeView>
                             <hr>
                             <li>
                                 <form action="account/logout" method="post">
@@ -77,8 +82,6 @@
 <main class="container my-5 content">
     @Body
 </main>
-
-<AdminTools/>
 
 <footer class="bg-light py-4">
     <div class="container text-center">

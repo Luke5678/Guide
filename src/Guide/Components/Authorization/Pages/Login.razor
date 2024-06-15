@@ -6,6 +6,7 @@
 @using Guide.Common.Account
 @using Guide.Domain.Entities
 
+@inject UserManager<User> UserManager
 @inject SignInManager<User> SignInManager
 @inject ILogger<Login> Logger
 @inject IdentityRedirectManager RedirectManager
@@ -69,7 +70,9 @@
 
     public async Task LoginUser()
     {
-        var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+        var user = await UserManager.FindByEmailAsync(Input.Email);
+        var result = await SignInManager.PasswordSignInAsync(user?.UserName ?? "", Input.Password, Input.RememberMe, lockoutOnFailure: false);
+        
         if (result.Succeeded)
         {
             Logger.LogInformation("User logged in.");

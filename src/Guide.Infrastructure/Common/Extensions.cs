@@ -1,4 +1,5 @@
-﻿using Guide.Domain.Entities;
+﻿using Guide.Domain.Common;
+using Guide.Domain.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,10 +16,18 @@ public static class Extensions
         var guideDbContext = scope.ServiceProvider.GetRequiredService<GuideDbContext>();
         guideDbContext.Database.Migrate();
     }
-
-    public static void CreateDefaultUser(this IApplicationBuilder app)
+    
+    public static void SeedDatabase(this IApplicationBuilder app)
     {
         using var scope = app.ApplicationServices.CreateScope();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+        var role = roleManager.FindByNameAsync(UserRoles.Administrator).GetAwaiter().GetResult();
+        if (role == null)
+        {
+            roleManager.CreateAsync(new IdentityRole(UserRoles.Administrator)).Wait();
+        }
+    
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
 
         if (userManager.Users.Any()) return;
@@ -33,5 +42,6 @@ public static class Extensions
         };
         
         userManager.CreateAsync(user, password!).Wait();
+        userManager.AddToRoleAsync(user, UserRoles.Administrator).Wait();
     }
 }
