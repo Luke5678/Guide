@@ -16,7 +16,7 @@ public static class Extensions
         var guideDbContext = scope.ServiceProvider.GetRequiredService<GuideDbContext>();
         guideDbContext.Database.Migrate();
     }
-    
+
     public static void SeedDatabase(this IApplicationBuilder app)
     {
         using var scope = app.ApplicationServices.CreateScope();
@@ -30,11 +30,11 @@ public static class Extensions
                 roleManager.CreateAsync(new IdentityRole(roleName)).Wait();
             }
         }
-        
+
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
 
         if (userManager.Users.Any()) return;
-        
+
         var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
         var email = configuration["DefaultUser:Email"];
         var password = configuration["DefaultUser:Password"];
@@ -43,8 +43,8 @@ public static class Extensions
         {
             UserName = email, Email = email, EmailConfirmed = true
         };
-        
+
         userManager.CreateAsync(user, password!).Wait();
-        userManager.AddToRoleAsync(user, UserRoles.Administrator).Wait();
+        userManager.AddToRolesAsync(user, [UserRoles.Administrator, UserRoles.MainAdministrator]).Wait();
     }
 }

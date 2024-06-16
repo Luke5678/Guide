@@ -18,6 +18,7 @@ public class GuideDbContext(
     public DbSet<AttractionTranslation> AttractionTranslations { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<CategoryTranslation> CategoryTranslations { get; set; }
+    public DbSet<Review> Reviews { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

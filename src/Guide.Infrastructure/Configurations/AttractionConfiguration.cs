@@ -12,6 +12,7 @@ public class AttractionConfiguration : AuditableEntityConfiguration<Attraction>
 
         builder.HasMany(c => c.Categories).WithMany(x => x.Attractions);
         builder.HasMany(c => c.Images).WithOne(x => x.Attraction);
+        builder.HasMany(c => c.Reviews).WithOne(x => x.Attraction);
         builder.HasMany(c => c.Translations).WithOne(t => t.Attraction);
     }
 }

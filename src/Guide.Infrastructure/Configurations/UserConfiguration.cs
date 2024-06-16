@@ -9,6 +9,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
     public void Configure(EntityTypeBuilder<User> builder)
     {
         builder.Property(p => p.Id).ValueGeneratedOnAdd();
+        builder.HasMany(c => c.Reviews).WithOne(x => x.User);
+        
         builder.HasQueryFilter(x => !x.IsDeleted);
     }
 }

@@ -1,0 +1,64 @@
+﻿@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+@inject IStringLocalizer<SharedResource> Loc
+
+<div class="fs-5">
+    <span>@Loc["Ocena"]: </span>
+    @if (Interactive)
+    {
+        @for (var i = 0; i < _classes.Length; i++)
+        {
+            var stars = i + 1;
+            <i class="bi @_classes[i]" role="button"
+               @onclick="async () => await OnClick(stars)"
+               @onmouseover="() => MouseOver(stars)"
+               @onmouseout="MouseOut">
+            </i>
+        }
+    }
+    else
+    {
+        @for (var i = 0; i < _classes.Length; i++)
+        {
+            <i class="bi @_classes[i]" role="button"></i>
+        }
+    }
+</div>
+
+@code {
+    [Parameter] public byte Stars { get; set; } = 4;
+    [Parameter] public bool Interactive { get; set; }
+    [Parameter] public EventCallback<byte> OnStarsChanged { get; set; }
+    
+    private string[] _classes = new string[5];
+
+    protected override void OnInitialized()
+    {
+        SetClasses(Stars);
+    }
+
+    private void SetClasses(int stars)
+    {
+        for (byte i = 0; i < 5; i++)
+        {
+            _classes[i] = stars > i ? "bi-star-fill" : "bi-star";
+        }
+    }
+
+    private async Task OnClick(int stars)
+    {
+        // Stars = (byte)stars;
+        await OnStarsChanged.InvokeAsync((byte)stars);
+    }
+
+    private void MouseOver(int stars)
+    {
+        SetClasses(stars);
+    }
+
+    private void MouseOut()
+    {
+        SetClasses(Stars);
+    }
+
+}

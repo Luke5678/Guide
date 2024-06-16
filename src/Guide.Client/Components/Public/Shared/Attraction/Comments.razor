@@ -1,56 +1,141 @@
-﻿@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+﻿@using System.ComponentModel.DataAnnotations
+@using System.Security.Claims
+@using Blazored.FluentValidation
 
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthStateProvider
 @inject IStringLocalizer<SharedResource> Loc
 
-<div class="row mb-5">
-    <form class="col">
-        <div class="d-flex justify-content-between gap-3 mb-2">
-            <h4>@Loc["Nowy komentarz"]</h4>
-            <button type="submit" class="btn btn-primary">@Loc["Napisz komentarz"]</button>
-        </div>
-        <div class="form-group">
-            <textarea class="form-control" placeholder="@Loc["Twój komentarz..."]"></textarea>
-        </div>
-    </form>
-</div>
-
-<h3>@PluralizedCommentsHeader</h3>
-<hr/>
-
-@for (var i = 0; i < _commentsAmount; i++)
+@if (_reviews != null)
 {
-    <div class="card mb-3">
-        <div class="card-body">
-            <h5>
-                <i class="bi bi-person-circle"></i>
-                <span>Jan Kowalski</span>
-            </h5>
-            <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>
-            <div class="d-flex justify-content-between">
-                <div>
-                    <i class="bi bi-calendar-event"></i>
-                    <span>27.05.2024 21:00</span>
+    <AuthorizeView Context="review">
+        <div class="row mb-5">
+            <EditForm Model="_input" OnValidSubmit="HandleMakeReview" class="col">
+                <FluentValidationValidator/>
+                <div class="d-flex justify-content-between gap-3 mb-2">
+                    <h4>@Loc["Twój komentarz"]</h4>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">@Loc["Zapisz"]</button>
+                        @if (_input.ReviewId > 0)
+                        {
+                            <button type="button" class="btn btn-danger" @onclick="HandleDeleteReview">
+                                <i class="bi bi-trash"></i>
+                                @Loc["Usuń"]
+                            </button>
+                        }
+                    </div>
                 </div>
-                <div>
-                    <i class="bi bi-hand-thumbs-up"></i>
-                    <span>5</span>
+                <div class="form-group mb-2">
+                    <InputTextArea @bind-Value="_input.Comment" class="form-control" rows="4">
+                        @_input.Comment
+                    </InputTextArea>
+                    <ValidationMessage For="() => _input.Comment"/>
+                </div>
+                <div class="form-group">
+                    <Rating Interactive="true" Stars="_input.Rating" OnStarsChanged="async stars => await OnRatingChanged(stars)"/>
+                </div>
+            </EditForm>
+        </div>
+    </AuthorizeView>
+
+    <h3>@PluralizedCommentsHeader</h3>
+    <hr/>
+
+    @foreach (var review in _reviews)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5>
+                    <i class="bi bi-person-circle"></i>
+                    <span>@review.UserName</span>
+                </h5>
+                <p>
+                    @review.Comment
+                </p>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <Rating Stars="@review.Rating"/>
+                    </div>
+                    <div>
+                        <i class="bi bi-calendar-event"></i>
+                        <span>@review.Submitted</span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    }
 }
 
 @code {
-    [Parameter] public AttractionDto? Attraction { get; set; }
-    private int _commentsAmount = 3;
+    [Parameter] public AttractionDto Attraction { get; set; } = null!;
+    private InputModel _input = new();
+    private ReviewDto[]? _reviews;
 
-    private string PluralizedCommentsHeader => _commentsAmount switch
+    private string PluralizedCommentsHeader => _reviews!.Length switch
     {
-        1 => $"{_commentsAmount} {@Loc["Komentarz"]}",
-        < 5 => $"{_commentsAmount} {@Loc["Komentarze"]}",
-        _ => $"{_commentsAmount} {@Loc["Komentarzy"]}"
+        0 => $"0 {@Loc["Komentarzy"]}",
+        1 => $"{_reviews.Length} {@Loc["Komentarz"]}",
+        < 5 => $"{_reviews.Length} {@Loc["Komentarze"]}",
+        _ => $"{_reviews.Length} {@Loc["Komentarzy"]}"
     };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchReviews();
+    }
+
+    async Task FetchReviews()
+    {
+        _reviews = await Http.GetFromJsonAsync<ReviewDto[]>($"/api/review/{Attraction.Id}");
+        if (_reviews == null) return;
+
+        var auth = await AuthStateProvider.GetAuthenticationStateAsync();
+        if (!auth.User.Claims.Any()) return;
+
+        _input = new InputModel
+        {
+            AttractionId = Attraction.Id,
+        };
+
+        var inputReview = _reviews.FirstOrDefault(x => x.UserId == auth.User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        if (inputReview == null) return;
+
+        _input.ReviewId = inputReview.Id;
+        _input.Comment = inputReview.Comment;
+        _input.Rating = inputReview.Rating;
+    }
+
+    async Task HandleMakeReview()
+    {
+        await Http.PostAsJsonAsync("/api/review", _input);
+        await FetchReviews();
+    }
+
+    async Task HandleDeleteReview()
+    {
+        await Http.DeleteAsync($"/api/review/{_input.ReviewId}");
+        await FetchReviews();
+    }
+
+    async Task OnRatingChanged(byte stars)
+    {
+        _input.Rating = stars;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private sealed class InputModel
+    {
+        public int AttractionId { get; set; }
+        public int ReviewId { get; set; }
+
+        [Required]
+        [StringLength(400, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 3)]
+        [Display(Name = "Comment")]
+        public string Comment { get; set; } = "";
+
+        [Required] [Display(Name = "Rating")] public byte Rating { get; set; } = 4;
+    }
 
 }

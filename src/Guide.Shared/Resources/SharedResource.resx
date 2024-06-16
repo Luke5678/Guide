@@ -99,7 +99,7 @@
     <data name="Napisz komentarz" xml:space="preserve">
         <value>Submit comment</value>
     </data>
-    <data name="Twój komentarz..." xml:space="preserve">
+    <data name="Twój komentarz" xml:space="preserve">
         <value>Your comment</value>
     </data>
     <data name="Komentarz" xml:space="preserve">
@@ -227,5 +227,8 @@
     </data>
     <data name="Nie masz dostępu do tego zasobu." xml:space="preserve">
         <value>You do not have access to this resource.</value>
+    </data>
+    <data name="Ocena" xml:space="preserve">
+        <value>Rating</value>
     </data>
 </root>

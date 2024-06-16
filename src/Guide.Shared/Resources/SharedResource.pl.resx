@@ -47,8 +47,8 @@
     <data name="Napisz komentarz" xml:space="preserve">
         <value>Napisz komentarz</value>
     </data>
-    <data name="Twój komentarz..." xml:space="preserve">
-        <value>Twój komentarz...</value>
+    <data name="Twój komentarz" xml:space="preserve">
+        <value>Twój komentarz</value>
     </data>
     <data name="Komentarz" xml:space="preserve">
         <value>Komentarz</value>
@@ -175,5 +175,8 @@
     </data>
     <data name="Nie masz dostępu do tego zasobu." xml:space="preserve">
         <value>Nie masz dostępu do tego zasobu.</value>
+    </data>
+    <data name="Ocena" xml:space="preserve">
+        <value>Ocena</value>
     </data>
 </root>
