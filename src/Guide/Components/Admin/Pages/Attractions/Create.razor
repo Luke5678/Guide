@@ -26,6 +26,11 @@
         <ValidationMessage For="() => _request.Name"/>
     </div>
     <div class="mb-3">
+        <label class="form-label">Krótki opis</label>
+        <InputText class="form-control" @bind-Value="_request.ShortDescription">@_request.ShortDescription</InputText>
+        <ValidationMessage For="() => _request.ShortDescription"/>
+    </div>
+    <div class="mb-3">
         <label class="form-label">Kategorie</label>
         <select class="form-select" multiple @onchange="SelectedCategoriesChanged">
             @foreach (var cat in _categories)

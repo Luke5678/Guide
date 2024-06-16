@@ -10,6 +10,7 @@ public class AttractionTranslationConfiguration : IEntityTypeConfiguration<Attra
     {
         builder.Property(t => t.LanguageCode).HasMaxLength(2).IsRequired();
         builder.Property(t => t.Name).HasMaxLength(255).IsRequired();
+        builder.Property(t => t.ShortDescription).HasMaxLength(255);
         builder.Property(t => t.Description).HasMaxLength(10240).IsRequired();
     }
 }

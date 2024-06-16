@@ -36,6 +36,11 @@
             <ValidationMessage For="() => _request.Name"/>
         </div>
         <div class="mb-3">
+            <label class="form-label">Krótki opis</label>
+            <InputText class="form-control" @bind-Value="_request.ShortDescription">@_request.ShortDescription</InputText>
+            <ValidationMessage For="() => _request.ShortDescription"/>
+        </div>
+        <div class="mb-3">
             <label class="form-label">Kategorie</label>
             <select class="form-select" multiple @onchange="OnSelectedCategoriesChanged">
                 @foreach (var cat in _categories)
@@ -134,7 +139,9 @@
         _request = new UpdateAttractionCommand
         {
             Id = attraction.Id,
-            Name = attraction.Name, Description = attraction.Description,
+            Name = attraction.Name,
+            ShortDescription = attraction.ShortDescription,
+            Description = attraction.Description,
             Categories = attraction.Categories.Select(x => x.Id),
             LanguageCode = _language
         };

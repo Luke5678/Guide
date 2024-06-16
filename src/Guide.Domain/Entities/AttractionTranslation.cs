@@ -6,6 +6,7 @@ public class AttractionTranslation
     public string LanguageCode { get; set; } = null!;
     
     public string Name { get; set; } = null!;
+    public string? ShortDescription { get; set; }
     public string Description { get; set; } = null!;
     
     public Attraction Attraction { get; set; } = null!;

@@ -39,6 +39,7 @@ public class UpdateAttractionCommandHandler : IRequestHandler<UpdateAttractionCo
             .ToListAsync(cancellationToken);
 
         attraction.Translations.First(x => x.LanguageCode == lang).Name = request.Name;
+        attraction.Translations.First(x => x.LanguageCode == lang).ShortDescription = request.ShortDescription;
         attraction.Translations.First(x => x.LanguageCode == lang).Description = request.Description;
         attraction.Categories = categories;
         await _dbContext.SaveChangesAsync(cancellationToken);

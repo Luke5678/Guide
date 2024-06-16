@@ -24,7 +24,9 @@ public class GetAttractionsQueryHandler(IDbContextFactory<GuideDbContext> dbCont
         var query = dbContext.Attractions
             .Select(x => new AttractionDto
             {
-                Id = x.Id, Name = x.Translations.First(y => y.LanguageCode == lang).Name,
+                Id = x.Id, 
+                Name = x.Translations.First(y => y.LanguageCode == lang).Name,
+                ShortDescription = x.Translations.First(y => y.LanguageCode == lang).ShortDescription,
                 Images = x.Images.Select(y => new AttractionImageDto
                 {
                     Url = y.Url, IsMain = y.IsMain

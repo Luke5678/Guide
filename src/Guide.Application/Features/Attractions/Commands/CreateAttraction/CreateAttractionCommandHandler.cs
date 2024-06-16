@@ -25,6 +25,7 @@ public class CreateAttractionCommandHandler(GuideDbContext dbContext, IMapper ma
             {
                 LanguageCode = x,
                 Name = request.Name,
+                ShortDescription = request.ShortDescription,
                 Description = request.Description
             }).ToArray()
         };

@@ -16,9 +16,9 @@ public class GetAttractionQueryHandler(GuideDbContext dbContext, IMapper mapper)
 
         var attraction = await dbContext.Attractions
             .Include(x => x.Categories)
-            .ThenInclude(x => x.Translations.Where(x => x.LanguageCode == lang))
+            .ThenInclude(x => x.Translations.Where(y => y.LanguageCode == lang))
             .Include(x => x.Images)
-            .Include(x => x.Translations.Where(x => x.LanguageCode == lang))
+            .Include(x => x.Translations.Where(y => y.LanguageCode == lang))
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 

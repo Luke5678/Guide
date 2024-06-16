@@ -8,6 +8,7 @@ public class AttractionDto : IMapFrom<Attraction>
 {
     public int Id { get; set; }
     public string Name { get; set; } = null!;
+    public string? ShortDescription { get; set; }
     public string Description { get; set; } = null!;
     public IEnumerable<CategoryDto> Categories { get; set; } = [];
     public IEnumerable<AttractionImageDto> Images { get; set; } = [];
@@ -17,7 +18,8 @@ public class AttractionDto : IMapFrom<Attraction>
     public void Mapping(Profile profile)
     {
         profile.CreateMap<Attraction, AttractionDto>()
-            .ForMember(x => x.Name, x => x.MapFrom(x => x.Translations.First().Name))
-            .ForMember(x => x.Description, x => x.MapFrom(x => x.Translations.First().Description));
+            .ForMember(x => x.Name, x => x.MapFrom(y => y.Translations.First().Name))
+            .ForMember(x => x.ShortDescription, x => x.MapFrom(y => y.Translations.First().ShortDescription))
+            .ForMember(x => x.Description, x => x.MapFrom(y => y.Translations.First().Description));
     }
 }

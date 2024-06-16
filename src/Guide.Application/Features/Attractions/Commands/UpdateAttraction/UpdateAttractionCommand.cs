@@ -9,6 +9,7 @@ public class UpdateAttractionCommand : IRequest<AttractionDto?>
 
     public string? LanguageCode { get; set; }
     public string Name { get; set; } = null!;
+    public string? ShortDescription { get; set; }
     public string Description { get; set; } = null!;
     public IEnumerable<int> Categories { get; set; } = [];
 }
