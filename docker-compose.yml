@@ -17,7 +17,7 @@
     volumes:
       - ./mysql-data:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: toor
+      MYSQL_ROOT_PASSWORD: strong_password
       MYSQL_DATABASE: guide_db
       MYSQL_USER: guide_user
       MYSQL_PASSWORD: user_password

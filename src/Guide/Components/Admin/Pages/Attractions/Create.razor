@@ -1,5 +1,5 @@
 ﻿@page "/admin/attractions/create"
-@rendermode InteractiveServer
+@rendermode @(new InteractiveServerRenderMode(false))
 
 @using Guide.Application.Features.AttractionImages.Commands.AddAttractionImages
 @using Guide.Application.Features.AttractionImages.Commands.DeleteAttractionImage
@@ -9,135 +9,107 @@
 
 @inject IMediator Mediator
 @inject NavigationManager NavigationManager
-@inject IJSRuntime JS
 
 <PageTitle>Atrakcje - Panel Administratora</PageTitle>
 
-<SectionContent SectionName="js">
-    <script src="js/tinyMceConf.js"></script>
-    <script src="_content/TinyMCE.Blazor/tinymce-blazor.js"></script>
-</SectionContent>
-
-<EditForm Model="_request" OnValidSubmit="HandleSubmit" class="mb-5">
-    <FluentValidationValidator/>
-    <div class="mb-3">
-        <label class="form-label">Nazwa</label>
-        <InputText class="form-control" @bind-Value="_request.Name">@_request.Name</InputText>
-        <ValidationMessage For="() => _request.Name"/>
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Krótki opis</label>
-        <InputText class="form-control" @bind-Value="_request.ShortDescription">@_request.ShortDescription</InputText>
-        <ValidationMessage For="() => _request.ShortDescription"/>
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Kategorie</label>
-        <select class="form-select" multiple @onchange="SelectedCategoriesChanged">
-            @foreach (var cat in _categories)
-            {
-                <option value="@cat.Id" selected=@_request.Categories.Contains(cat.Id)>@cat.Name</option>
-            }
-        </select>
-    </div>
-    <div class="mb-3">
-        <label class="form-label">Opis</label>
-        @if (_isTinyMceAvailable)
-        {
+@if (_request != null)
+{
+    <EditForm Model="_request" OnValidSubmit="HandleSubmit" class="mb-5">
+        <FluentValidationValidator/>
+        <div class="mb-3">
+            <label class="form-label">Nazwa</label>
+            <InputText class="form-control" @bind-Value="_request.Name">@_request.Name</InputText>
+            <ValidationMessage For="() => _request.Name"/>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Krótki opis</label>
+            <InputText class="form-control" @bind-Value="_request.ShortDescription">@_request.ShortDescription</InputText>
+            <ValidationMessage For="() => _request.ShortDescription"/>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Kategorie</label>
+            <select class="form-select" multiple @onchange="SelectedCategoriesChanged">
+                @foreach (var cat in _categories)
+                {
+                    <option value="@cat.Id" selected=@_request.Categories.Contains(cat.Id)>@cat.Name</option>
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Opis</label>
             <Editor Field="() => _request.Description"
                     @bind-Value="_request.Description"
                     ScriptSrc="/js/tinymce/tinymce.min.js"
                     JsConfSrc="tinyMceConf"/>
-        }
-        <ValidationMessage For="() => _request.Description"/>
-    </div>
-    <button type="submit" class="btn btn-primary">Zapisz</button>
-</EditForm>
+            <ValidationMessage For="() => _request.Description"/>
+        </div>
+        <button type="submit" class="btn btn-primary">Zapisz</button>
+    </EditForm>
 
-<div class="row">
-    <div class="col mb-3">
-        <label class="form-label">Zdjęcia</label>
-        <InputFile class="form-control" OnChange="OnInputFileChange" multiple/>
+    <div class="row">
+        <div class="col mb-3">
+            <label class="form-label">Zdjęcia</label>
+            <InputFile class="form-control" OnChange="OnInputFileChange" multiple/>
+        </div>
     </div>
-</div>
 
-<div class="row row-gap-3">
-    @if (_isProcessingFiles)
-    {
-        <p>Przesyłanie zdjęć...</p>
-    }
-    else
-    {
-        @foreach (var image in _request.Images)
+    <div class="row row-gap-3">
+        @if (_isProcessingFiles)
         {
-            <div class="col-sm-6 col-lg-4">
-                <div class="card">
-                    <div class="row g-0">
-                        <div class="col-md-6">
-                            <img src="@image.Url" class="img-fluid rounded-start" alt="...">
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card-body">
-                                <div class="form-check mb-3">
-                                    <InputCheckbox class="form-check-input" type="checkbox" id="@($"image-{image.Id}")" name="@($"image-{image.Id}")"
-                                                   @bind-Value="image.IsMain" @bind-Value:after="@(async () => await OnMainImageChange(image))"/>
-                                    <label class="form-check-label" for="image-@image.Id">
-                                        Zdjęcie główne
-                                    </label>
+            <p>Przesyłanie zdjęć...</p>
+        }
+        else
+        {
+            @foreach (var image in _request.Images)
+            {
+                <div class="col-sm-6 col-lg-4">
+                    <div class="card">
+                        <div class="row g-0">
+                            <div class="col-md-6">
+                                <img src="@image.Url" class="img-fluid rounded-start" alt="...">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card-body">
+                                    <div class="form-check mb-3">
+                                        <InputCheckbox class="form-check-input" type="checkbox" id="@($"image-{image.Id}")" name="@($"image-{image.Id}")"
+                                                       @bind-Value="image.IsMain" @bind-Value:after="@(async () => await OnMainImageChange(image))"/>
+                                        <label class="form-check-label" for="image-@image.Id">
+                                            Zdjęcie główne
+                                        </label>
+                                    </div>
+                                    <button type="button" class="btn btn-danger" @onclick="@(async () => await DeleteImage(image))">
+                                        Usuń
+                                    </button>
                                 </div>
-                                <button type="button" class="btn btn-danger" @onclick="@(async () => await DeleteImage(image))">
-                                    Usuń
-                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            }
         }
-    }
-</div>
+    </div>
+}
 
 @code {
     private const int MaxAllowedFiles = 50;
 
-    private readonly CreateAttractionCommand _request = new();
+    private CreateAttractionCommand? _request = null;
     private readonly string _language = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
     private List<CategoryDto> _categories = [];
     private bool _isProcessingFiles;
-    private bool _isTinyMceAvailable;
 
     protected override async Task OnInitializedAsync()
     {
+        _request = new CreateAttractionCommand();
         _categories = await Mediator.Send(new GetCategoriesQuery
         {
             LanguageCode = _language
         });
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            try
-            {
-                _isTinyMceAvailable = await JS.InvokeAsync<bool>("isTinyMceAvailable");
-            }
-            catch (JSException)
-            {
-            }
-            catch (InvalidOperationException)
-            {
-            }
-
-            if (!_isTinyMceAvailable)
-            {
-                NavigationManager.Refresh(true);
-            }
-        }
-    }
-
     private async Task HandleSubmit()
     {
-        await Mediator.Send(_request);
+        await Mediator.Send(_request!);
         NavigationManager.NavigateTo("/admin/attractions");
     }
 
@@ -145,7 +117,7 @@
     {
         if (e.Value is not null)
         {
-            _request.Categories = ((string[])e.Value).Select(int.Parse).ToList();
+            _request!.Categories = ((string[])e.Value).Select(int.Parse).ToList();
         }
     }
 
@@ -158,7 +130,7 @@
             Files = e.GetMultipleFiles(MaxAllowedFiles)
         });
 
-        _request.Images.AddRange(images);
+        _request!.Images.AddRange(images);
         _isProcessingFiles = false;
         await InvokeAsync(StateHasChanged);
     }
@@ -166,14 +138,14 @@
     private async Task DeleteImage(AttractionImageDto image)
     {
         await Mediator.Send(new DeleteAttractionImageCommand { Id = image.Id });
-        _request.Images.Remove(image);
+        _request!.Images.Remove(image);
 
         await InvokeAsync(StateHasChanged);
     }
 
     private async Task OnMainImageChange(AttractionImageDto targetImage)
     {
-        foreach (var image in _request.Images)
+        foreach (var image in _request!.Images)
         {
             image.IsMain = image.Id == targetImage.Id;
         }

@@ -156,7 +156,7 @@
         <value>Zmiana hasła</value>
     </data>
     <data name="Stare hasło" xml:space="preserve">
-        <value>Stare hasło</value>
+        <value>Obecne hasło</value>
     </data>
     <data name="Nowe hasło" xml:space="preserve">
         <value>Nowe hasło</value>

@@ -11,7 +11,7 @@ public class ReviewController : BaseController
     [HttpGet("{attractionId:int}")]
     public async Task<IActionResult> Get(int attractionId = 0)
     {
-        return Ok(await Mediator.Send(new GetReviewsQuery
+        return Ok(await Mediator.Send(new GetAttractionReviewsQuery
         {
             AttractionId = attractionId
         }));

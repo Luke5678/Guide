@@ -46,6 +46,7 @@ public class CreateAttractionCommandHandler(GuideDbContext dbContext, IMapper ma
                 if (dbImage != null)
                 {
                     dbImage.AttractionId = attraction.Id;
+                    dbImage.IsMain = image.IsMain;
                 }
             }
 

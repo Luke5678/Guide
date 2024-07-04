@@ -1,23 +1,15 @@
-﻿@page "/admin/attractions"
-@rendermode InteractiveServer
-
-@using Guide.Application.Features.Attractions.Commands.DeleteAttraction
-@using Guide.Application.Features.Attractions.Queries.CountAttractions
-@using Guide.Application.Features.Attractions.Queries.GetAttractions
+﻿@page "/admin/reviews"
 @using Guide.Application.Features.Categories.Commands.DeleteCategory
+@using Guide.Application.Features.Categories.Queries.CountCategories
+@using Guide.Application.Features.Categories.Queries.GetCategories
+@using Guide.Application.Features.Reviews.Commands
+@using Guide.Application.Features.Reviews.Queries
+@rendermode InteractiveServer
 
 @inject IMediator Mediator
 @inject NavigationManager NavigationManager
 
-<PageTitle>Atrakcje - Panel Administratora</PageTitle>
-
-<div class="row mb-4 mb-md-0">
-    <div class="d-flex">
-        <a class="btn btn-primary" href="admin/attractions/create">
-            Nowa atrakcja
-        </a>
-    </div>
-</div>
+<PageTitle>Komentarze - Panel Administratora</PageTitle>
 
 <div class="row align-items-end mb-3">
     <div class="col-12 col-md mb-3 mb-md-0">
@@ -40,7 +32,7 @@
     </div>
 </div>
 
-@if (Attractions == null)
+@if (Reviews == null)
 {
     <div class="row">...</div>
 }
@@ -50,38 +42,37 @@ else
         <div class="table-responsive">
             <table class="table align-middle table-striped table-bordered table-hover">
                 <thead>
-                    <tr>
-                        <th @onclick="@(async () => await ChangeOrder("id"))">
-                            Id
-                        </th>
-                        <th @onclick="@(async () => await ChangeOrder("name"))">
-                            Nazwa
-                        </th>
-                        <th @onclick="@(async () => await ChangeOrder("category"))">
-                            Kategorie
-                        </th>
-                        <th/>
-                    </tr>
+                <tr>
+                    <th @onclick="@(async () => await ChangeOrder("id"))">
+                        Id
+                    </th>
+                    <th @onclick="@(async () => await ChangeOrder("username"))">
+                        Nazwa użytkownika
+                    </th>
+                    <th @onclick="@(async () => await ChangeOrder("comment"))">
+                        Komentarz
+                    </th>
+                    <th @onclick="@(async () => await ChangeOrder("date"))">
+                        Data dodania
+                    </th>
+                    <th/>
+                </tr>
                 </thead>
                 <tbody>
-                    @foreach (var attraction in Attractions)
-                    {
-                        <tr>
-                            <td>@attraction.Id</td>
-                            <td>@attraction.Name</td>
-                            <td>@(string.Join(", ", attraction.Categories.Select(x => x.Name)))</td>
-                            <td>
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-primary" @onclick="() => Edit(attraction)">
-                                        Edytuj
-                                    </button>
-                                    <button class="btn btn-danger" @onclick="() => Delete(attraction)">
-                                        Usuń
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    }
+                @foreach (var review in Reviews)
+                {
+                    <tr>
+                        <td>@review.Id</td>
+                        <td>@review.UserName</td>
+                        <td>@review.Comment</td>
+                        <td>@review.Submitted</td>
+                        <td>
+                            <button class="btn btn-danger" @onclick="() => Delete(review)">
+                                Usuń
+                            </button>
+                        </td>
+                    </tr>
+                }
                 </tbody>
             </table>
         </div>
@@ -96,25 +87,25 @@ else
     [Parameter] [SupplyParameterFromQuery] public string? OrderBy { get; set; }
     [Parameter] [SupplyParameterFromQuery] public string? Search { get; set; }
 
-    private List<AttractionDto>? Attractions { get; set; }
+    private List<ReviewDto>? Reviews { get; set; }
     private int PagesAmount { get; set; }
 
     private string? _searchInput;
-    private readonly int[] _limits = [5, 10, 15, 20, 30];
+    readonly int[] _limits = [5, 10, 15, 20, 30];
     private readonly string _language = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadAttractions();
+        await LoadReviews();
         _searchInput = Search;
     }
 
-    async Task LoadAttractions()
+    async Task LoadReviews()
     {
         if (Limit < 5) Limit = 10;
         else if (Limit > 50) Limit = 50;
 
-        var count = await Mediator.Send(new CountAttractionsQuery
+        var count = await Mediator.Send(new CountCategoriesQuery
         {
             Search = Search, LanguageCode = _language
         });
@@ -123,7 +114,7 @@ else
         if (Page < 1) Page = 1;
         else if (Page > PagesAmount) Page = PagesAmount;
 
-        Attractions = await Mediator.Send(new GetAttractionsQuery
+        Reviews = await Mediator.Send(new GetReviewsQuery()
         {
             Page = Page, Limit = Limit, OrderBy = OrderBy, Search = Search,
             LanguageCode = _language
@@ -132,15 +123,10 @@ else
         await InvokeAsync(StateHasChanged);
     }
 
-    void Edit(AttractionDto attraction)
+    async Task Delete(ReviewDto review)
     {
-        NavigationManager.NavigateTo($"/admin/attractions/update/{attraction.Id}");
-    }
-
-    async Task Delete(AttractionDto attraction)
-    {
-        await Mediator.Send(new DeleteAttractionCommand { Id = attraction.Id });
-        await LoadAttractions();
+        await Mediator.Send(new DeleteReviewCommand { ReviewId = review.Id });
+        await LoadReviews();
     }
 
     async Task ChangePage(int? newPage = null)
@@ -167,7 +153,7 @@ else
 
         var uriBuilder = new UriBuilder(uri) { Query = query.ToString() };
 
-        await LoadAttractions();
+        await LoadReviews();
         NavigationManager.NavigateTo(uriBuilder.Uri.ToString());
     }
 
@@ -188,15 +174,15 @@ else
         await ChangePage();
     }
 
-    async Task ChangeLimit(ChangeEventArgs e)
-    {
-        Limit = Convert.ToInt32(e.Value?.ToString());
-        await ChangePage();
-    }
-
     async Task ChangeSearch()
     {
         Search = _searchInput;
+        await ChangePage();
+    }
+
+    async Task ChangeLimit(ChangeEventArgs e)
+    {
+        Limit = Convert.ToInt32(e.Value?.ToString());
         await ChangePage();
     }
 
